@@ -1,0 +1,17 @@
+{
+    "dialect":"oracle",
+    "host":"10.10.4.157",
+    "port":1521,
+    "username":"\"c##frank\"",
+    "password":"root",
+    "database":"XE",
+    "pool":{
+        "min":0,
+        "max":10
+    },
+    "entities": [
+        "/dist/test/entity/**/*.js"
+    ],
+    "cache":true,
+    "debug":true
+}
