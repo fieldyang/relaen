@@ -1,0 +1,50 @@
+{
+  "name": "relaen",
+  "version": "0.2.2-beta1",
+  "description": "一个node环境下基于typescript的ORM框架",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist/types/index.d.ts",
+    "dist/index.js",
+    "dist/index.js.map",
+    "dist/core/**/*.js",
+    "dist/core/**/*.js.map",
+    "dist/types/core/**/*.d.ts"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/relaen/relaents.git"
+  },
+  "keywords": [
+    "node",
+    "relaen",
+    "orm",
+    "typescript"
+  ],
+  "author": "fieldyang <fieldyang@163.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/relaen/relaents/issues"
+  },
+  "homepage": "https://github.com/relaen/relaents",
+  "dependencies": {
+    
+  },
+  "devDependencies": {
+    
+  },
+  "engines": {
+    "node": ">=13.10.0"
+  },
+  "contributors": [
+    {
+      "name": "杨雷",
+      "email": "fieldyang@163.com"
+    }
+  ]
+}

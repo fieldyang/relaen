@@ -4,7 +4,7 @@ import { Logger } from "./logger";
 import { EntityManager } from "./entitymanager";
 import { ErrorFactory } from "./errorfactory";
 import { ConnectionManager } from "./connectionmanager";
-import { stat } from "node:fs";
+import { stat } from "fs";
 
 /**
  * sql执行器
