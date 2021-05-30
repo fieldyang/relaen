@@ -1,5 +1,4 @@
 
-import { connect } from "node:http2";
 import { RelaenManager, getEntityManager, EntityManager, Query, Connection, Transaction, getConnection, NativeQuery } from "..";
 import { ConnectionManager } from "../core/connectionmanager";
 import { Shop } from "./entity_mysql/shop";
@@ -323,17 +322,17 @@ async function doTransaction() {
  */
 RelaenManager.init({
     //数据库产品名
-    dialect: "postgres",
+    dialect: "mysql",
     //数据库服务器地址
     host: "localhost",
     //端口
-    port: 5432,
+    port: 3306,
     //用户名
-    username: "postgres",
+    username: "root",
     //密码
-    password: "root",
+    password: "field",
     //数据库名
-    database: "postgres",
+    database: "test",
     //连接池，可选
     pool: {
         min: 0,
@@ -360,8 +359,8 @@ RelaenManager.init({
 // cache(1);
 // lazyLoad(1);
 // findOne();
-// findMany();
+findMany();
 // getCount();
 // linkQuery();
 // native();
-doTransaction();
+// doTransaction();

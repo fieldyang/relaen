@@ -1,9 +1,13 @@
-import { Connection } from "../connection";
-import { ErrorFactory } from "../errorfactory";
-import { IConnectionCfg } from "../types";
-import { BaseDriver } from "./basedriver";
+import { Connection } from "../../connection";
+import { ErrorFactory } from "../../errorfactory";
+import { IConnectionCfg } from "../../types";
+import { IBaseDriver } from "../../ibasedriver";
 
-export class MysqlDriver implements BaseDriver {
+/**
+ * mysql driver
+ * @since 0.2.2
+ */
+export class MysqlDriver implements IBaseDriver {
     /**
      * 配置
      */
@@ -19,6 +23,10 @@ export class MysqlDriver implements BaseDriver {
      */
     dbMdl: any;
 
+    /**
+     * 构造器
+     * @param cfg   连接配置
+     */
     constructor(cfg: IConnectionCfg) {
         this.dbMdl = require('mysql');
         this.options = {
@@ -76,5 +84,44 @@ export class MysqlDriver implements BaseDriver {
                 });
             });
         }
+    }
+
+    /**
+     * 执行sql语句
+     * @param connection    db connection
+     * @param sql           待执行sql
+     * @param params        参数数组
+     */
+     public async exec(connection: Connection, sql: string, params?: any[]) {
+        if (sql.length < 6) {
+            throw ErrorFactory.getError("0002", [sql]);
+        }
+        let r: any = await new Promise((resolve, reject) => {
+            connection.conn.query(sql, params, (error, results, fields) => {
+                if (error) {
+                    reject(error);
+                }
+                resolve(results);
+            });
+        });
+        if (r.insertId) {
+            return r.insertId;
+        }
+        return r;
+    }
+
+    /**
+     * 处理记录起始记录索引和记录数
+     * @param sql       sql
+     * @param start     开始索引
+     * @param limit     记录数
+     * @returns         处理后的sql
+     * @since           0.2.0
+     */
+    public handleStartAndLimit(sql: string, start?: number, limit?: number) {
+        if (!Number.isInteger(start) || start < 0 || !Number.isInteger(limit) || limit <= 0) {
+            return sql;
+        }
+        return sql + ' limit ' + start + ',' + limit;
     }
 }

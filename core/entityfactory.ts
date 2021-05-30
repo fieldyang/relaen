@@ -41,9 +41,9 @@ class EntityFactory{
 
     /**
      * 添加主键
-     * @param entityName    实体类名    
+     * @param entityName    实体类名
      * @param propName      实体字段名
-     * @param cfg 
+     * @param cfg           主键配置对象
      */
     public static addPKey(entityName:string,propName:string,cfg:IEntityPKey){
         this.checkAndNewClass(entityName);
@@ -60,9 +60,9 @@ class EntityFactory{
 
     /**
      * 添加实体字段
-     * @param entityName    实体类名    
+     * @param entityName    实体类名
      * @param propName      实体字段名
-     * @param cfg 
+     * @param cfg
      */
     public static addColumn(entityName:string,colName:string,cfg:IEntityColumn){
         this.checkAndNewClass(entityName);
@@ -145,10 +145,8 @@ class EntityFactory{
             const fsMdl = require('fs');
             const pathMdl = require('path');
             const dir = fsMdl.readdirSync(dirPath,{withFileTypes:true});
-            
             let fn:string = fileExt;
             let reg:RegExp = EntityFactory.toReg(fn,3);
-            
             for (const dirent of dir) {
                 if(dirent.isDirectory()){
                     if(deep){
@@ -158,12 +156,24 @@ class EntityFactory{
                     if(reg.test(dirent.name)){
                         require(pathMdl.resolve(dirPath , dirent.name));
                     }
-                }            
+                }
             }
         }
     }
 
-    
+    /**
+     * 通过表名获取配置对象
+     * @param tblName   表名
+     * @returns         entity 配置对象
+     */
+    public static getEntityCfgByTblName(tblName:string):IEntityCfg{
+        for(let v of this.entityClasses){
+            if(v[1].table === tblName){
+                return v[1];
+            }
+        }
+    }
+
     private static toReg(str:string,side?:number):RegExp{
         // 转字符串为正则表达式并加入到数组
         //替换/为\/

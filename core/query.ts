@@ -1,5 +1,4 @@
 import { EntityManager } from "./entitymanager";
-import { Translator } from "./translator";
 import { BaseEntity } from "./baseentity";
 import { SqlExecutor } from "./sqlexecutor";
 import { EntityFactory } from "./entityfactory";
@@ -49,11 +48,6 @@ class Query {
     type: EQueryType;
 
     /**
-     * 解释器
-     */
-    translator: Translator;
-
-    /**
      * 实体别名map
      */
     aliasMap: Map<string, any>;
@@ -71,9 +65,6 @@ class Query {
         this.entityManager = em;
         this.entityClassName = entityClassName;
         this.type = EQueryType.SELECT;
-        if (entityClassName) {
-            this.translator = new Translator(entityClassName);
-        }
         this.paramArr = [];
     }
 
@@ -175,11 +166,7 @@ class Query {
         if (limit > 0) {
             this.limit = limit;
         }
-        // let z = this.execSql.indexOf('order by');
-        // if (start >= 0 && limit > 0 && this.execSql.indexOf('order by') == -1) {
-        //     let cfg: IEntityCfg = EntityFactory.getClass(this.entityClassName);
-        //     this.execSql += ' order by ' + cfg.columns.get(cfg.id.name).name;
-        // }
+        
         let results: any[] = await SqlExecutor.exec(this.entityManager, this.execSql, this.paramArr, this.start, this.limit);
         if (!notEntity && Array.isArray(results)) {
             let retArr: any[] = [];
@@ -196,7 +183,7 @@ class Query {
      */
     private preHandle() {
         if (!this.execSql) {
-            let r = this.translator.getQuerySql();
+            let r = RelaenManager.translator.getQuerySql();
             this.execSql = r[0];
             this.aliasMap = new Map();
 
@@ -286,14 +273,14 @@ class Query {
      */
     select(fields: string | Array<string>): Query {
         this.type = EQueryType.SELECT;
-        this.translator.sqlType = this.type;
+        RelaenManager.translator.sqlType = this.type;
         if (!fields) {
             return;
         }
         if (!Array.isArray(fields)) {
             fields = [fields];
         }
-        this.translator.handleSelectFields(fields);
+        RelaenManager.translator.handleSelectFields(fields);
         return this;
     }
 
@@ -310,7 +297,7 @@ class Query {
         if (!Array.isArray(tables)) {
             tables = [tables];
         }
-        this.translator.handleFrom(tables);
+        RelaenManager.translator.handleFrom(tables);
         return this;
     }
     // TODO between in 
@@ -324,7 +311,7 @@ class Query {
      * @since 0.2.0
      */
     where(params: object): Query {
-        this.translator.handleWhere(params);
+        RelaenManager.translator.handleWhere(params);
         return this;
     }
 
@@ -335,7 +322,7 @@ class Query {
      * @since 0.2.0
      */
     orderBy(params: object) {
-        this.translator.handleOrder(params);
+        RelaenManager.translator.handleOrder(params);
         return this;
     }
 
@@ -344,10 +331,10 @@ class Query {
      * @since 0.2.0
      */
     distinct() {
-        if (!this.translator.modifiers) {
-            this.translator.modifiers = [];
+        if (!RelaenManager.translator.modifiers) {
+            RelaenManager.translator.modifiers = [];
         }
-        this.translator.modifiers.push('DISTINCT');
+        RelaenManager.translator.modifiers.push('DISTINCT');
         return this;
     }
 
@@ -357,7 +344,7 @@ class Query {
      */
     delete() {
         this.type = EQueryType.DELETE;
-        this.translator.sqlType = this.type;
+        RelaenManager.translator.sqlType = this.type;
         return this;
     }
 }

@@ -22,6 +22,8 @@ var RelaenTip ={
     "0200":"Failed to create connection,error message is:${0}",
     "0201":"Failed to open connection,error message is:${0}",
     "0202":"Failed to close connection,error message is:${0}",
-    "0250":"Connection is not exist,create connection first"
+    "0250":"Connection is not exist,create connection first",
+
+    "0300":"Dialect '${0}' has no corresponding driver"
 }
 export {RelaenTip}

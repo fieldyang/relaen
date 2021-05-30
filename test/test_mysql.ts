@@ -1,5 +1,4 @@
 
-import { connect } from "node:http2";
 import { RelaenManager, getEntityManager, EntityManager, Query, Connection, Transaction,getConnection,NativeQuery } from "..";
 import { ConnectionManager } from "../core/connectionmanager";
 import { Shop } from "./entity_mysql/shop";

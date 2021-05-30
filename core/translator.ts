@@ -3,9 +3,6 @@ import { BaseEntity } from "./baseentity";
 import { EntityFactory } from "./entityfactory";
 import { ErrorFactory } from "./errorfactory";
 import { RelaenUtil } from "./relaenutil";
-import { RelaenManager } from "./relaenmanager";
-import { MssqlTransaction } from "./transaction/mssqltransaction";
-import { SqlExecutor } from "./sqlexecutor";
 
 /**
  * 翻译器
@@ -65,7 +62,7 @@ class Translator {
      * entity转insert sql
      * @param entity 
      */
-    public static entityToInsert(entity: any): any[] {
+    public entityToInsert(entity: any,extra?:string): any[] {
         let orm: IEntityCfg = EntityFactory.getClass(entity.constructor.name);
         if (!orm) {
             throw ErrorFactory.getError("0010", [entity.constructor.name]);
@@ -106,20 +103,17 @@ class Translator {
             }
             fields.push(fn);
             values.push(v);
-            qArr.push(RelaenUtil.getPlaceholder());
+            qArr.push('?');
         }
         arr.push(fields.join(','));
         arr.push(') values (');
-        arr.push(RelaenUtil.getPlaceholder(qArr.length));
+        arr.push(qArr.join(','));
         arr.push(')');
-        if (RelaenManager.dialect == 'mssql') {
-            arr.push('SELECT @@IDENTITY AS insertId');
+        //针对不同的数据库，可能存在附加串
+        if(extra){
+            arr.push(extra);
         }
-        let sql = arr.join(' ');
-        if (RelaenManager.dialect == 'postgres') {
-            sql += ' RETURNING ' + orm.columns.get(orm.id.name).name;
-        }
-        return [sql, values];
+        return [arr.join(' '), values];
     }
 
     /**
@@ -127,7 +121,7 @@ class Translator {
      * @param entity                待更新entity
      * @param ignoreUndefinedValue  忽略undefined值
      */
-    public static entityToUpdate(entity: IEntity, ignoreUndefinedValue?: boolean): any[] {
+    public entityToUpdate(entity: IEntity, ignoreUndefinedValue?: boolean): any[] {
         let orm: IEntityCfg = EntityFactory.getClass(entity.constructor.name);
         if (!orm) {
             throw ErrorFactory.getError("0010", [entity.constructor.name]);
@@ -174,28 +168,12 @@ class Translator {
                 idName = key[1].name;
             }
             // mssql 设置主键自增时，不修改主键
-            if (RelaenManager.dialect == 'mssql' && fo.identity && fo.identity == true) {
-                continue;
-            }
-            fv.push(fn + '=' + RelaenUtil.getPlaceholder());
+            fv.push(fn + '=?');
             fields.push(fn);
             values.push(v);
-
         }
         if (!idValue) {
             throw ErrorFactory.getError('0021', [orm.id.name]);
-        }
-        // mssql 占位符需要序列
-        if (RelaenManager.dialect === 'mssql') {
-            fv.forEach((v, i) => {
-                fv[i] = v.slice(0, -1) + i
-            })
-        }
-        // postgres 占位符1开始
-        if (RelaenManager.dialect === 'postgres') {
-            fv.forEach((v, i) => {
-                fv[i] = v.slice(0, -1) + (i + 1);
-            })
         }
         arr.push(fv.join(','));
         //where
@@ -211,7 +189,7 @@ class Translator {
      * @param className     实体类名
      * 
      */
-    public static toDelete(entity: any, className?: string): any[] {
+    public toDelete(entity: any, className?: string): any[] {
         className = className || entity.constructor.name;
         let idName: string;
         let idValue: any;
@@ -229,7 +207,7 @@ class Translator {
         if (!idName || !idValue) {
             throw ErrorFactory.getError("0025");
         }
-        return ["delete from " + orm.table + ' where ' + orm.columns.get(idName).name + '=' + RelaenUtil.getPlaceholder(), idValue];
+        return ["delete from " + orm.table + ' where ' + orm.columns.get(idName).name + '=?', idValue];
     }
 
     /**
@@ -460,7 +438,7 @@ class Translator {
                 }
             }
             //字段和值
-            whereStr += fn + ' ' + rel + ' ' + RelaenUtil.getPlaceholder(1, ii);
+            whereStr += fn + ' ' + rel + ' ?';
             //后置字符串，通常为 'and','or',')'
             if (vobj && vobj.after) {
                 whereStr += ' ' + vobj.after + ' ';
@@ -513,7 +491,7 @@ class Translator {
      * @returns 数组[sql,linkMap,values]
      *          其中：linkMap为该translator的linkNameMap，values为查询参数值
      */
-    private getSelectSql(): any[] {
+     protected getSelectSql(): any[] {
         let orm: IEntityCfg = EntityFactory.getClass(this.mainEntityName);
         //linkName不存在主表，则需要设置主表
         if (!this.linkNameMap.has(this.mainEntityName)) {
@@ -569,18 +547,14 @@ class Translator {
     }
     /**
      * 生成增删改sql
+     * @param notNeedAlias      不需要别名
      * @returns 数组[sql,linkMap,values]
      *          其中：linkMap为该translator的linkNameMap，values为查询参数值
      */
-    private getDeleteSql() {
+    protected getDeleteSql(notNeedAlias?:boolean) {
         let orm: IEntityCfg = EntityFactory.getClass(this.mainEntityName);
-        let sql;
-        // let sql = "delete from " + orm.table + ' t0 '; mysql、mssql可以增加别名，oracle不可以
-        if (RelaenManager.dialect == 'oracle' || RelaenManager.dialect == 'postgres') {
-            sql = "delete from " + orm.table + ' t0 ';
-        } else {
-            sql = "delete t0 from " + orm.table + ' t0 ';
-        }
+        let sql = "delete " + notNeedAlias?'':'t0 ' + "from " + orm.table + ' t0 ';
+        
         //处理主表和join表
         for (let o of this.linkNameMap) {
             if (!o[1]['from']) {

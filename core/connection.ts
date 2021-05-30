@@ -1,4 +1,4 @@
-import { Transaction } from "./transaction/transaction";
+import { Transaction } from "./transaction";
 import { ConnectionManager } from "./connectionmanager";
 /**
  * 数据库连接类
@@ -22,6 +22,10 @@ class Connection{
      */
     fromId: number;
     
+    /**
+     * 事务对象
+     */
+    transaction:Transaction;
     /**
      * 是否自动提交
      */

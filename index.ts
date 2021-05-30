@@ -1,5 +1,5 @@
 export * from './core/decorator/decorator';
-export * from './core/transaction/transaction';
+export * from './core/transaction';
 export * from './core/baseentity';
 export * from './core/connection';
 export * from './core/connectionmanager';
@@ -18,3 +18,13 @@ export * from './core/sqlexecutor';
 export * from './core/threadlocal';
 export * from './core/translator';
 export * from './core/types';
+export * from './core/driverfactory';
+
+export * from './core/dialect/mssql/mssqldriver';
+export * from './core/dialect/mssql/mssqltransaction';
+export * from './core/dialect/mysql/mysqldriver';
+export * from './core/dialect/mysql/mysqltransaction';
+export * from './core/dialect/oracle/oracledriver';
+export * from './core/dialect/oracle/oracletransaction';
+export * from './core/dialect/postgres/postgresdriver';
+export * from './core/dialect/postgres/postgrestransaction';

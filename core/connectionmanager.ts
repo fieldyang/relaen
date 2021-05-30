@@ -2,21 +2,19 @@ import { RelaenManager } from "./relaenmanager";
 import { Connection } from "./connection";
 import { RelaenThreadLocal } from "./threadlocal";
 import { IConnectionCfg } from "./types";
-import { BaseDriver } from "./driver/basedriver";
-import { MysqlDriver } from "./driver/mysqldriver";
-import { OracleDriver } from "./driver/oracledriver";
-import { MssqlDriver } from "./driver/mssqldriver";
-import { PostgresDriver } from "./driver/postgresdriver";
-
+import { IBaseDriver } from "./ibasedriver";
+import { DriverFactory } from "./driverfactory";
+import { ErrorFactory } from "./errorfactory";
 
 /**
  * 连接管理器
  */
 class ConnectionManager {
     /**
-     * 数据库驱动
+     * 数据库驱动器
+     * @since 0.2.2
      */
-    static driver: BaseDriver;
+    static driver: IBaseDriver;
 
     /**
      * 连接map {threadId:{num:conn创建次数,conn:连接}}
@@ -29,26 +27,17 @@ class ConnectionManager {
      * @param cfg relaen配置文件的数据库配置对象
      */
     public static init(cfg: IConnectionCfg) {
-        switch (RelaenManager.dialect) {
-            case 'mysql':
-                this.driver = new MysqlDriver(cfg);
-                break;
-            case 'oracle':
-                this.driver = new OracleDriver(cfg);
-                break;
-            case 'mssql':
-                this.driver = new MssqlDriver(cfg);
-                break;
-            case 'postgres':
-                this.driver = new PostgresDriver(cfg);
-                break;
+        let driverClass:any = DriverFactory.get(RelaenManager.dialect);
+        if(!driverClass){
+            throw ErrorFactory.getError("0300", [RelaenManager.dialect]);
         }
+        this.driver = Reflect.construct(driverClass,[cfg]);
     }
 
     /**
      * 获取连接对象
      * @param id   创建者id，直接使用时，不需要设置该值
-     * @returns    connection对象  
+     * @returns    connection对象
      */
     public static async createConnection(id?: number): Promise<Connection> {
         let conn: Connection;

@@ -2,6 +2,7 @@ import { IEntityCfg, IEntity } from "./types";
 import { EntityFactory } from "./entityfactory";
 import { BaseEntity } from "./baseentity";
 import { RelaenManager } from "./relaenmanager";
+import { PlaceholderFactory } from "./placeholderfactory";
 
 class RelaenUtil {
     /**
@@ -72,38 +73,23 @@ class RelaenUtil {
     }
 
     /**
-     * 获取当前数据库的占位符
-     * @param length        获取占位符个数
-     * @param param         占位符字符
-     * @returns             返回字符串拼接占位符 
+     * 处理参数占位符
+     * @param sql   sql串
+     * @returns     修改后的sql
      */
-    static getPlaceholder(length?: number, param?: number | string): string {
-        length = length || 1;
-        let arr = new Array(length);
-        switch (RelaenManager.dialect) {
-            case 'mysql':
-                arr.fill('?');
-                break;
-            case 'oracle':
-                for (let i = 0; i < length; i++) {
-                    arr[i] = ':' + (param || i);
-                }
-                break;
-            case 'mssql':
-                for (let i = 0; i < length; i++) {
-                    arr[i] = '@' + (param || i);
-                }
-                break;
-            case 'postgres':
-                for (let i = 0; i < length; i++) {
-                    if (typeof param == 'number') {
-                        param = param + 1;
-                    }
-                    arr[i] = '$' + (param || i + 1);
-                }
-                break;
+    public static handlePlaceholder(sql:string):string{
+        //mysql 默认处理
+        if(RelaenManager.dialect === 'mysql'){
+            return sql;
         }
-        return arr.join();
+        let reg = /(\'.*?\?.*?\')|\?/g;
+        let index = 0;
+        return sql.replace(reg,(match,p1)=>{
+            if(match !== '?'){
+                return p1;
+            }
+            return PlaceholderFactory.get(index++);
+        });
     }
 }
 

@@ -1,5 +1,4 @@
 import { IEntityCfg, EEntityState, IEntity, IEntityRelation, IEntityColumn } from "./types";
-import { Translator } from "./translator";
 import { SqlExecutor } from "./sqlexecutor";
 import { EntityFactory } from "./entityfactory";
 import { Query } from "./query";
@@ -10,7 +9,6 @@ import { EntityManagerFactory } from "./entitymanagerfactory";
 import { RelaenUtil } from "./relaenutil";
 import { BaseEntity } from "./baseentity";
 import { RelaenManager } from "./relaenmanager";
-import { accessSync } from "node:fs";
 
 /**
  * 实体管理器
@@ -47,7 +45,7 @@ class EntityManager {
      * 如果状态为new，则执行insert，同时改变为persist，如果为persist，则执行update
      * @param entity                实体
      * @param ignoreUndefinedValue  忽略undefined值，针对update时有效
-     * @returns                     保存后的实体  
+     * @returns                     保存后的实体
      */
     public async save(entity: IEntity, ignoreUndefinedValue?: boolean): Promise<IEntity> {
         //先进行预处理
@@ -64,14 +62,14 @@ class EntityManager {
                 //如果有主键，则查询是否存在对应实体
                 let en: IEntity = await this.find(entity.constructor.name, idValue);
                 if (en) { //如果该实体已存在，则执行update
-                    sqlAndValue = Translator.entityToUpdate(entity, ignoreUndefinedValue);
+                    sqlAndValue = RelaenManager.translator.entityToUpdate(entity, ignoreUndefinedValue);
                 } else {  //实体不存在，则执行insert
-                    sqlAndValue = Translator.entityToInsert(entity);
+                    sqlAndValue = RelaenManager.translator.entityToInsert(entity);
                 }
             } else { //无主键
                 //根据策略生成主键
                 await this.genKey(entity);
-                sqlAndValue = Translator.entityToInsert(entity);
+                sqlAndValue = RelaenManager.translator.entityToInsert(entity);
             }
             let r = await SqlExecutor.exec(this, sqlAndValue[0], sqlAndValue[1]);
             if (r === null) {
@@ -81,23 +79,11 @@ class EntityManager {
             EntityManagerFactory.setEntityStatus(entity, EEntityState.PERSIST);
             //设置主键值
             if (!RelaenUtil.getIdValue(entity)) {
-                // oracle 重新查询主键id
-                if (RelaenManager.dialect === 'oracle') {
-                    let orm: IEntityCfg = EntityFactory.getClass(entity.constructor.name);
-                    if (!orm) {
-                        throw ErrorFactory.getError("0020", [entity.constructor.name]);
-                    }
-                    // 获取主键数据库字段
-                    let idName = orm.columns.get(orm.id.name).name;
-                    r = await SqlExecutor.exec(this, 'select ' + idName + ' from ' + orm.table + ' where rowid = ' + RelaenUtil.getPlaceholder(), [r]);
-                    RelaenUtil.setIdValue(entity, r[0][idName]);
-                } else {
-                    RelaenUtil.setIdValue(entity, r);
-                }
+                RelaenUtil.setIdValue(entity, r);
             }
         } else { //update
             //更新到数据库
-            let sqlAndValue: any[] = Translator.entityToUpdate(entity, ignoreUndefinedValue);
+            let sqlAndValue: any[] = RelaenManager.translator.entityToUpdate(entity, ignoreUndefinedValue);
             let r = await SqlExecutor.exec(this, sqlAndValue[0], sqlAndValue[1]);
             if (r === null) {
                 return null;
@@ -113,7 +99,7 @@ class EntityManager {
      * @returns             被删除实体
      */
     public async delete(entity: any, className?: string): Promise<boolean> {
-        let sqlAndValue = Translator.toDelete(entity, className);
+        let sqlAndValue = RelaenManager.translator.toDelete(entity, className);
         if (sqlAndValue) {
             await SqlExecutor.exec(this, sqlAndValue[0], [sqlAndValue[1]]);
         }
@@ -135,10 +121,7 @@ class EntityManager {
         if (!idName) {
             throw ErrorFactory.getError("0103");
         }
-        let sql = "select * from " + orm.table + " where " + orm.columns.get(idName).name + '=' + RelaenUtil.getPlaceholder();
-        if (RelaenManager.dialect === 'mssql') {
-            sql += ' order by ' + orm.columns.get(idName).name
-        }
+        let sql = "select * from " + orm.table + " where " + orm.columns.get(idName).name + ' = ?';
         let query = this.createNativeQuery(sql, entityClassName);
         query.setParameter(0, id);
         return await query.getResult();
@@ -167,17 +150,10 @@ class EntityManager {
      * @param start             开始记录行
      * @param limit             获取记录数
      * @param order             排序对象，参考findOne
-     * @since 0.1.3                 
+     * @since 0.1.3
      */
     public async findMany(entityClassName: string, params?: object, start?: number, limit?: number, order?: object): Promise<Array<any>> {
         let query: Query = this.createQuery(entityClassName);
-        if (RelaenManager.dialect == 'mssql' && start >= 0 && limit > 0 && !order) {
-            order = {};
-            let cfg: IEntityCfg = EntityFactory.getClass(entityClassName);
-            if (cfg.id) {
-                order[cfg.id.name] = 'asc';
-            }
-        }
         return await query.select('*')
             .where(params)
             .orderBy(order)
