@@ -109,7 +109,7 @@ export class OracleDriver implements IBaseDriver {
      * @returns         sequence 值
      */
     public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
-        let query: NativeQuery = em.createNativeQuery("select " + seqName + ".nextval from dual");
+        let query: NativeQuery = em.createNativeQuery('select "' + seqName + '".nextval from dual');
         let r = await query.getResult();
         if (r) {
             //转换为整数
