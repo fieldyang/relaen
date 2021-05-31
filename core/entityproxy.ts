@@ -1,4 +1,4 @@
-import { IEntityCfg, IEntityRelation, ERelationType, IEntityColumn, IEntity, EEntityState } from "./types";
+import { IEntityCfg, IEntityRelation, ERelationType, IEntityColumn, IEntity } from "./types";
 import { EntityFactory } from "./entityfactory";
 import { EntityManager } from "./entitymanager";
 import { getEntityManager } from "./entitymanagerfactory";

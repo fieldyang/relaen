@@ -1,3 +1,4 @@
+import { ErrorFactory } from "./errorfactory";
 import { IEntityCfg, IEntityPKey, IEntityColumn, IEntityRelation} from "./types";
 
 /**
@@ -54,6 +55,11 @@ class EntityFactory{
         }else{
             cfg.name = propName;
         }
+        // 生成器类型为table无keyName或sequence无seqName
+        if(cfg.generator === 'table' && !cfg.keyName || cfg.generator === 'sequence' && !cfg.seqName){
+            throw ErrorFactory.getError("0050");
+        }
+        
         let entity:IEntityCfg = this.entityClasses.get(entityName);
         entity.id = cfg;
     }
