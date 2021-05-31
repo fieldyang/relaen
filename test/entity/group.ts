@@ -1,7 +1,7 @@
 import {BaseEntity,Entity,Column,Id,OneToMany,EntityProxy} from '../..';
 import {GroupUser} from './groupuser';
 
-@Entity("t_group",'postgres')
+@Entity("t_group",'test')
 export class Group extends BaseEntity{
 	@Id()
 	@Column({

@@ -32,7 +32,7 @@ export class MssqlTranslator extends Translator{
 
         let arr: string[] = [];
         arr.push('update');
-        arr.push(orm.table);
+        arr.push(RelaenUtil.getTableName(orm));
         arr.push('set');
         let fv: string[] = [];
         //id值

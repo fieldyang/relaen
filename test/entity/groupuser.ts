@@ -2,7 +2,7 @@ import {BaseEntity,Entity,Column,Id,JoinColumn,ManyToOne,EntityProxy} from '../.
 import {User} from './user';
 import {Group} from './group';
 
-@Entity("t_group_user",'postgres')
+@Entity("t_group_user",'test')
 export class GroupUser extends BaseEntity{
 	@Id()
 	@Column({

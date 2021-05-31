@@ -2,7 +2,7 @@ import {BaseEntity,Entity,Column,Id,JoinColumn,OneToOne,OneToMany,EntityProxy} f
 import {User} from './user';
 import {Shop} from './shop';
 
-@Entity("t_user_info",'postgres')
+@Entity("t_user_info",'test')
 export class UserInfo extends BaseEntity{
 	@Id()
 	@Column({

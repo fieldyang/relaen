@@ -126,7 +126,7 @@ class EntityManager {
         if (!idName) {
             throw ErrorFactory.getError("0103");
         }
-        let sql = "select * from " + orm.table + " where " + orm.columns.get(idName).name + ' = ?';
+        let sql = "select * from " + RelaenUtil.getTableName(orm) + " where " + orm.columns.get(idName).name + ' = ?';
         let query = this.createNativeQuery(sql, entityClassName);
         query.setParameter(0, id);
         return await query.getResult();
@@ -254,16 +254,12 @@ class EntityManager {
                     break;
                 case 'table':
                     let fn: string = orm.id.keyName;
-                    let query: NativeQuery = this.createNativeQuery("select id_value from " + orm.id.table + " where id_name='" + fn + "'");
+                    let query: NativeQuery = this.createNativeQuery("select id_value from " + RelaenUtil.getTableName(orm.id.table,orm.schema) + " where id_name='" + fn + "'");
                     let r = await query.getResult();
                     if (r) {
-                        value = r['id_value'];
                         //转换为整数
-                        value = parseInt(value);
-                        value++;
+                        value = parseInt(r);
                     }
-                    //主键值+1并写回数据库
-                    await SqlExecutor.exec(this, "update " + orm.id.table + " set id_value=" + value + " where id_name='" + fn + "'");
                     break;
                 case 'uuid':
                     value = require('uuid').v1();

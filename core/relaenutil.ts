@@ -91,6 +91,19 @@ class RelaenUtil {
             return PlaceholderFactory.get(index++);
         });
     }
+
+    /**
+     * 获取table名
+     * @param cfg   实体配置或表名
+     * @returns     表名串，如果有schema，则需要加上schema
+     */
+    public static getTableName(cfg:IEntityCfg|string,schema?:string){
+        if(typeof cfg === 'object'){
+            return cfg.schema?cfg.schema + '.' + cfg.table:cfg.table;
+        }else{
+            return schema?schema + '.' + cfg:cfg;
+        }
+    }
 }
 
 export { RelaenUtil }

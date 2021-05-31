@@ -64,7 +64,7 @@ async function updShop() {
     let shop: Shop = <Shop>await Shop.find(1);
     // 通过entitymanager操作
     // let shop:Shop = <Shop> await em.find(Shop.name,1);  
-    shop.setAddress('四川 绵阳');
+    shop.setAddress('四川成都');
     //参数为true，表示仅对地址进行修改，其他项不变，否则，除了shopId和address，其它项都会置为null
     await shop.save(true);
     // 通过entitymanager操作
@@ -172,7 +172,7 @@ async function findOne() {
             logic: 'OR',
             after: ')'
         },
-        "address": '四川绵阳'
+        "address": '四川成都'
     }
     let r = <Shop>await Shop.findOne(params);
     console.log(r);
@@ -266,7 +266,7 @@ async function linkQuery() {
                 value: new UserInfo(1),
                 after: ')'
             },
-            "userInfoForOwnerId.sexy": 'M'
+            "userInfoForOwnerId.sexy": 'F'
         })
         .orderBy({//order by
             'userInfoForOwnerId.userId': 'asc',
@@ -352,7 +352,7 @@ RelaenManager.init({
 
 // addShop();
 // addShop1();
-updShop();
+// updShop();
 // delShop(12);
 // delShops();
 // find(1);
@@ -361,6 +361,6 @@ updShop();
 // findOne();
 // findMany();
 // getCount();
-// linkQuery();
+linkQuery();
 // native();
 // doTransaction();

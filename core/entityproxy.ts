@@ -39,7 +39,7 @@ class EntityProxy {
             if (rel.type === ERelationType.ManyToOne || rel.type === ERelationType.OneToOne && !rel.mappedBy) {
                 let sql: string;
                 let query: NativeQuery;
-                sql = "select m.* from " + eo1.table + " m," + eo.table + " m1 where m." +
+                sql = "select m.* from " + RelaenUtil.getTableName(eo1) + " m," + RelaenUtil.getTableName(eo) + " m1 where m." +
                     column.refName + "= m1." + column.name + " and m1." + eo.columns.get(eo.id.name).name + " = ?";
                 if (RelaenManager.dialect == 'mssql') {
                     sql += ' order by ' + eo1.columns.get(eo1.id.name).name;
@@ -62,7 +62,7 @@ class EntityProxy {
                     throw ErrorFactory.getError('0022', [rel.entity, column1]);
                 }
 
-                let rql: string = "select * from " + eo1.table + " where " + column1.name + " = ?";
+                let rql: string = "select * from " + RelaenUtil.getTableName(eo1) + " where " + column1.name + " = ?";
                 if (RelaenManager.dialect == 'mssql') {
                     rql += ' order by ' + eo1.columns.get(eo1.id.name).name;
                 }

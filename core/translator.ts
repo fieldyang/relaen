@@ -69,7 +69,7 @@ class Translator {
         }
         let arr: string[] = [];
         arr.push('insert into');
-        arr.push(orm.table);
+        arr.push(RelaenUtil.getTableName(orm));
         arr.push('(');
         //字段组合
         let fields: string[] = [];
@@ -129,7 +129,7 @@ class Translator {
 
         let arr: string[] = [];
         arr.push('update');
-        arr.push(orm.table);
+        arr.push(RelaenUtil.getTableName(orm));
         arr.push('set');
         let fv: string[] = [];
         //id值
@@ -207,7 +207,7 @@ class Translator {
         if (!idName || !idValue) {
             throw ErrorFactory.getError("0025");
         }
-        return ["delete from " + orm.table + ' where ' + orm.columns.get(idName).name + '=?', idValue];
+        return ["delete from " + RelaenUtil.getTableName(orm) + ' where ' + orm.columns.get(idName).name + '=?', idValue];
     }
 
     /**
@@ -510,7 +510,7 @@ class Translator {
         if (this.modifiers && this.modifiers.length > 0) {
             sql += ' ' + this.modifiers.join(',') + ' ';
         }
-        sql += fields + ' FROM ' + orm.table + ' ' + this.linkNameMap.get(this.mainEntityName)['alias'];
+        sql += fields + ' FROM ' + RelaenUtil.getTableName(orm) + ' ' + this.linkNameMap.get(this.mainEntityName)['alias'];
 
         let entities: string[] = [];
         //处理主表和join表
@@ -523,7 +523,7 @@ class Translator {
             let al1: string = o[1]['alias'];
             let al2: string = this.linkNameMap.get(o[1]['from'])['alias'];
             let co: IEntityColumn = o[1]['co'];
-            sql += ' LEFT JOIN ' + orm.table + ' ' + al1 + ' on ' + al2 + '.' + co.name + '=' + al1 + '.' + co.refName;
+            sql += ' LEFT JOIN ' + RelaenUtil.getTableName(orm) + ' ' + al1 + ' on ' + al2 + '.' + co.name + '=' + al1 + '.' + co.refName;
         }
         //处理from
         if (this.fromTables) {
@@ -532,7 +532,7 @@ class Translator {
                     continue;
                 }
                 orm = EntityFactory.getClass(t);
-                sql += ',' + orm.table + ' ' + this.linkNameMap.get(t)['alias'];
+                sql += ',' + RelaenUtil.getTableName(orm) + ' ' + this.linkNameMap.get(t)['alias'];
             }
         }
 
@@ -553,7 +553,7 @@ class Translator {
      */
     protected getDeleteSql(notNeedAlias?:boolean) {
         let orm: IEntityCfg = EntityFactory.getClass(this.mainEntityName);
-        let sql = "delete " + (notNeedAlias?'':'t0 ') + "from " + orm.table + ' t0 ';
+        let sql = "delete " + (notNeedAlias?'':'t0 ') + " from " + RelaenUtil.getTableName(orm) + " t0 ";
         //处理主表和join表
         for (let o of this.linkNameMap) {
             if (!o[1]['from']) {
@@ -563,7 +563,7 @@ class Translator {
             let al1: string = o[1]['alias'];
             let al2: string = this.linkNameMap.get(o[1]['from'])['alias'];
             let co: IEntityColumn = o[1]['co'];
-            sql += ' LEFT JOIN ' + orm.table + ' ' + al1 + ' on ' + al2 + '.' + co.name + '=' + al1 + '.' + co.refName;
+            sql += ' LEFT JOIN ' + RelaenUtil.getTableName(orm) + ' ' + al1 + ' on ' + al2 + '.' + co.name + '=' + al1 + '.' + co.refName;
         }
 
         if (this.whereObject) {
