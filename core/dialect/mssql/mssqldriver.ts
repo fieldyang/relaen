@@ -2,6 +2,8 @@ import { Connection } from "../../connection";
 import { IConnectionCfg, IEntityCfg } from "../../types";
 import { IBaseDriver } from "../../ibasedriver";
 import { EntityFactory } from "../../entityfactory";
+import { EntityManager } from "../../entitymanager";
+import { NativeQuery } from "../../nativequery";
 
 /**
  * mssql driver
@@ -118,5 +120,21 @@ export class MssqlDriver implements IBaseDriver {
             sql += ' order by ' + cfg.columns.get(cfg.id.name).name + ' asc ';
         }
         return sql + ' OFFSET ' + start + ' ROWS FETCH NEXT ' + limit + ' ROWS ONLY';
+    }
+
+    /**
+     * 获取实体sequence，针对主键生成策略为sequence时有效
+     * @param em        entity manager
+     * @param seqName   sequence name
+     * @returns         sequence 值
+     */
+    public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+        let query: NativeQuery = em.createNativeQuery("select next value for " + seqName);
+        let r = await query.getResult();
+        if (r) {
+            //转换为整数
+            return parseInt(r);
+        }
+        return 0;
     }
 }

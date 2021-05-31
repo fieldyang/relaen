@@ -2,6 +2,8 @@ import { Connection } from "../../connection";
 import { ErrorFactory } from "../../errorfactory";
 import { IConnectionCfg } from "../../types";
 import { IBaseDriver } from "../../ibasedriver";
+import { EntityManager } from "../../entitymanager";
+import { NativeQuery } from "../../nativequery";
 
 /**
  * mysql driver
@@ -123,5 +125,15 @@ export class MysqlDriver implements IBaseDriver {
             return sql;
         }
         return sql + ' limit ' + start + ',' + limit;
+    }
+
+    /**
+     * 获取实体sequence，针对主键生成策略为sequence时有效
+     * @param em        entity manager
+     * @param seqName   sequence name
+     * @returns         sequence 值
+     */
+     public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+        return 0;
     }
 }

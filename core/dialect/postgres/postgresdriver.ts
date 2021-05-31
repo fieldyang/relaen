@@ -1,6 +1,8 @@
 import { Connection } from "../../connection";
 import { IConnectionCfg } from "../../types";
 import { IBaseDriver } from "../../ibasedriver";
+import { EntityManager } from "../../entitymanager";
+import { NativeQuery } from "../../nativequery";
 
 /**
  * postgres driver
@@ -96,5 +98,21 @@ export class PostgresDriver implements IBaseDriver{
             return sql;
         }
         return sql + ' LIMIT ' + limit + ' OFFSET ' + start;
+    }
+
+    /**
+     * 获取实体sequence，针对主键生成策略为sequence时有效
+     * @param em        entity manager
+     * @param seqName   sequence name
+     * @returns         sequence 值
+     */
+     public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+        let query: NativeQuery = em.createNativeQuery("select nextval('" + seqName + "'");
+        let r = await query.getResult();
+        if (r) {
+            //转换为整数
+            return parseInt(r);
+        }
+        return 0;
     }
 }

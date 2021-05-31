@@ -2,7 +2,7 @@ import { EntityFactory } from "../../entityfactory";
 import { ErrorFactory } from "../../errorfactory";
 import { Translator } from "../../translator";
 import { TranslatorFactory } from "../../translatorfactory";
-import { EQueryType, IEntityCfg } from "../../types";
+import { EQueryType, IEntity, IEntityCfg } from "../../types";
 
 /**
  * postgres 翻译器

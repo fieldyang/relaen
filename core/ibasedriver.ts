@@ -1,4 +1,6 @@
 import { Connection } from "./connection";
+import { EntityManager } from "./entitymanager";
+import { IEntity } from "./types";
 
 /**
  * 数据库驱动器接口
@@ -50,4 +52,12 @@ export interface IBaseDriver {
      * @returns         处理后的sql
      */
     handleStartAndLimit(sql: string, start?: number, limit?: number);
+
+    /**
+     * 获取实体sequence，针对主键生成策略为sequence时有效
+     * @param em        entity manager
+     * @param seqName   sequence name
+     * @returns         sequence 值
+     */
+    getSequenceValue(em:EntityManager,seqName:string):Promise<number>;
 }

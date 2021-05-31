@@ -9,8 +9,9 @@ import { EntityManagerFactory } from "./entitymanagerfactory";
 import { RelaenUtil } from "./relaenutil";
 import { BaseEntity } from "./baseentity";
 import { RelaenManager } from "./relaenmanager";
-import { Translator } from "./translator";
 import { TranslatorFactory } from "./translatorfactory";
+import { ConnectionManager } from "./connectionmanager";
+
 
 /**
  * 实体管理器
@@ -247,6 +248,10 @@ class EntityManager {
         if (orm && orm.id) {
             let value;
             switch (orm.id.generator) {
+                case 'sequence':
+                    let sn: string = orm.id.seqName;
+                    value = await ConnectionManager.driver.getSequenceValue(this,sn);
+                    break;
                 case 'table':
                     let fn: string = orm.id.keyName;
                     let query: NativeQuery = this.createNativeQuery("select id_value from " + orm.id.table + " where id_name='" + fn + "'");
@@ -257,7 +262,6 @@ class EntityManager {
                         value = parseInt(value);
                         value++;
                     }
-
                     //主键值+1并写回数据库
                     await SqlExecutor.exec(this, "update " + orm.id.table + " set id_value=" + value + " where id_name='" + fn + "'");
                     break;

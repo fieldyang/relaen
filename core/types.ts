@@ -177,8 +177,9 @@ interface IEntityPKey {
      * 对应属性名
      */
     name?: string;
+
     /**
-     * 主键生成策略 identity table uuid
+     * 主键生成策略 identity,sequence,table,uuid
      */
     generator?: string;
 
@@ -194,6 +195,11 @@ interface IEntityPKey {
      * 主键对应来源表记录项，如User实体用id_name='ID_USER'这一条记录产生主键，则keyName='ID_USER'
      */
     keyName?: string;
+
+    /**
+     * 对应sequence生成策略，表示sequence name
+     */
+    seqName?: string;
 }
 
 /**
