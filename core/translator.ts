@@ -221,7 +221,8 @@ class Translator {
 
     /**
      * 处理select字段集合
-     * @param arr   字段集合
+     * @param arr           字段集合
+     * @param entityName    实体类名
      */
     public handleSelectFields(arr: string[], entityName?: string) {
         //第一个为实体名
@@ -239,7 +240,6 @@ class Translator {
                 } else { //移除
                     arr.splice(i, 1);
                 }
-
             }
         }
         this.selectedFields = arr;
@@ -553,8 +553,7 @@ class Translator {
      */
     protected getDeleteSql(notNeedAlias?:boolean) {
         let orm: IEntityCfg = EntityFactory.getClass(this.mainEntityName);
-        let sql = "delete " + notNeedAlias?'':'t0 ' + "from " + orm.table + ' t0 ';
-        
+        let sql = "delete " + (notNeedAlias?'':'t0 ') + "from " + orm.table + ' t0 ';
         //处理主表和join表
         for (let o of this.linkNameMap) {
             if (!o[1]['from']) {

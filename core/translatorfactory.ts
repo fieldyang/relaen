@@ -1,4 +1,5 @@
 import { IBaseDriver } from "./ibasedriver";
+import { RelaenManager } from "./relaenmanager";
 
 /**
  * driver工厂
@@ -20,11 +21,11 @@ export class TranslatorFactory{
 
     /**
      * 获取driver
-     * @param name      driver名 
+     * @param args      解释器初始化参数，通常为实体类名
      * @returns         driver类 或 undefined
      */
-    public static get(name:string):any{
-        let ts = this.translators.get(name);
-        return Reflect.construct(ts,[]);
+    public static get(args?:any):any{
+        let ts = this.translators.get(RelaenManager.dialect);
+        return Reflect.construct(ts,[args]);
     }
 }

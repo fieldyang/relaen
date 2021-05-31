@@ -30,10 +30,6 @@ class RelaenManager {
     public static debug: boolean;
 
     /**
-     * 解释器
-     */
-    public static translator:Translator;
-    /**
      * 初始化
      * @param cfg   配置文件名或配置对象
      */
@@ -50,8 +46,6 @@ class RelaenManager {
         this.cache = cfg.cache === false ? false : true;
         this.initDriver();
         this.initTranslator();
-        //初始化translator
-        this.translator = TranslatorFactory.get(this.dialect);
         ConnectionManager.init(cfg);
         //加载实体
         for (let path of cfg.entities) {

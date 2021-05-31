@@ -64,11 +64,11 @@ async function updShop() {
     let shop: Shop = <Shop>await Shop.find(1);
     // 通过entitymanager操作
     // let shop:Shop = <Shop> await em.find(Shop.name,1);  
-    shop.setAddress('四川 成都');
+    shop.setAddress('四川 绵阳');
     //参数为true，表示仅对地址进行修改，其他项不变，否则，除了shopId和address，其它项都会置为null
     await shop.save(true);
     // 通过entitymanager操作
-    // await em.save(shop,true);  
+    // await em.save(shop,true);
     // await em.close();
 }
 
@@ -352,14 +352,14 @@ RelaenManager.init({
 
 // addShop();
 // addShop1();
-// updShop();
-// delShop(25);
+updShop();
+// delShop(12);
 // delShops();
 // find(1);
 // cache(1);
 // lazyLoad(1);
 // findOne();
-findMany();
+// findMany();
 // getCount();
 // linkQuery();
 // native();

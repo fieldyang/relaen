@@ -9,6 +9,8 @@ import { EntityManagerFactory } from "./entitymanagerfactory";
 import { RelaenUtil } from "./relaenutil";
 import { BaseEntity } from "./baseentity";
 import { RelaenManager } from "./relaenmanager";
+import { Translator } from "./translator";
+import { TranslatorFactory } from "./translatorfactory";
 
 /**
  * 实体管理器
@@ -53,6 +55,7 @@ class EntityManager {
             return null;
         }
         let status = EntityManagerFactory.getEntityStatus(entity);
+        let translator = TranslatorFactory.get(entity.constructor.name);
         //无主键或状态为new
         if (status === EEntityState.NEW) {
             //检查并生成主键
@@ -62,14 +65,14 @@ class EntityManager {
                 //如果有主键，则查询是否存在对应实体
                 let en: IEntity = await this.find(entity.constructor.name, idValue);
                 if (en) { //如果该实体已存在，则执行update
-                    sqlAndValue = RelaenManager.translator.entityToUpdate(entity, ignoreUndefinedValue);
+                    sqlAndValue = translator.entityToUpdate(entity, ignoreUndefinedValue);
                 } else {  //实体不存在，则执行insert
-                    sqlAndValue = RelaenManager.translator.entityToInsert(entity);
+                    sqlAndValue = translator.entityToInsert(entity);
                 }
             } else { //无主键
                 //根据策略生成主键
                 await this.genKey(entity);
-                sqlAndValue = RelaenManager.translator.entityToInsert(entity);
+                sqlAndValue = translator.entityToInsert(entity);
             }
             let r = await SqlExecutor.exec(this, sqlAndValue[0], sqlAndValue[1]);
             if (r === null) {
@@ -83,7 +86,7 @@ class EntityManager {
             }
         } else { //update
             //更新到数据库
-            let sqlAndValue: any[] = RelaenManager.translator.entityToUpdate(entity, ignoreUndefinedValue);
+            let sqlAndValue: any[] = translator.entityToUpdate(entity, ignoreUndefinedValue);
             let r = await SqlExecutor.exec(this, sqlAndValue[0], sqlAndValue[1]);
             if (r === null) {
                 return null;
@@ -99,7 +102,8 @@ class EntityManager {
      * @returns             被删除实体
      */
     public async delete(entity: any, className?: string): Promise<boolean> {
-        let sqlAndValue = RelaenManager.translator.toDelete(entity, className);
+        let translator = TranslatorFactory.get(entity.constructor.name);
+        let sqlAndValue = translator.toDelete(entity, className);
         if (sqlAndValue) {
             await SqlExecutor.exec(this, sqlAndValue[0], [sqlAndValue[1]]);
         }
