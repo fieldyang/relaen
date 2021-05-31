@@ -44,8 +44,9 @@ export class OracleDriver implements IBaseDriver {
 
     /**
      * 获取连接
+     * @returns     connection
      */
-    public async getConnection() {
+    public async getConnection():Promise<any> {
         // 使用池连接
         if (this.options['poolMax']) {
             if (!this.pool) {
@@ -60,7 +61,7 @@ export class OracleDriver implements IBaseDriver {
      * 关闭连接
      * @param connection    数据库连接对象
      */
-     public async closeConnection(connection: Connection) {
+    public async closeConnection(connection: Connection) {
         if (this.pool) {
             await connection.conn.release();
         } else {
@@ -74,6 +75,7 @@ export class OracleDriver implements IBaseDriver {
      * @param connection    db connection
      * @param sql           待执行sql
      * @param params        参数数组
+     * @returns             结果(集)
      */
     public async exec(connection: Connection, sql: string, params?: any[]) {
         let r = await connection.conn.execute(sql, params, { autoCommit: connection.autoCommit, outFormat: 4002 });

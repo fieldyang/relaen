@@ -3,7 +3,6 @@ import { ErrorFactory } from "../../errorfactory";
 import { IConnectionCfg } from "../../types";
 import { IBaseDriver } from "../../ibasedriver";
 import { EntityManager } from "../../entitymanager";
-import { NativeQuery } from "../../nativequery";
 
 /**
  * mysql driver
@@ -47,13 +46,15 @@ export class MysqlDriver implements IBaseDriver {
 
     /**
      * 获取连接
+     * @returns     数据库连接
      */
-    getConnection() {
+    public async getConnection():Promise<any> {
         return new Promise((resolve, reject) => {
             if (this.pool) {
                 this.pool.getConnection((err, conn) => {
                     if (err) {
                         reject(err);
+                        return;
                     }
                     resolve(conn);
                 })
@@ -70,9 +71,9 @@ export class MysqlDriver implements IBaseDriver {
 
     /**
      * 关闭连接
-     * @param connection    数据库连接对象 
+     * @param connection    数据库连接对象
      */
-    async closeConnection(connection: Connection) {
+    public async closeConnection(connection: Connection) {
         if (this.pool) {
             connection.conn.release();
             return null;
@@ -81,6 +82,7 @@ export class MysqlDriver implements IBaseDriver {
                 connection.conn.end(err => {
                     if (err) {
                         rej(ErrorFactory.getError('0202', [err]));
+                        return;
                     }
                     res(null);
                 });
@@ -93,6 +95,7 @@ export class MysqlDriver implements IBaseDriver {
      * @param connection    db connection
      * @param sql           待执行sql
      * @param params        参数数组
+     * @returns             结果(集)
      */
      public async exec(connection: Connection, sql: string, params?: any[]) {
         if (sql.length < 6) {
@@ -102,6 +105,7 @@ export class MysqlDriver implements IBaseDriver {
             connection.conn.query(sql, params, (error, results, fields) => {
                 if (error) {
                     reject(error);
+                    return;
                 }
                 resolve(results);
             });

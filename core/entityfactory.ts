@@ -18,7 +18,7 @@ class EntityFactory{
     /**
      * 添加实体类
      * @param entityName    实体类名
-     * @param tblName       表名       
+     * @param tblName       表名
      * @param schema        数据库名
      */
     public static addClass(entity:any,tblName:string,schema?:string){
@@ -59,7 +59,6 @@ class EntityFactory{
         if(cfg.generator === 'table' && !cfg.keyName || cfg.generator === 'sequence' && !cfg.seqName){
             throw ErrorFactory.getError("0050");
         }
-        
         let entity:IEntityCfg = this.entityClasses.get(entityName);
         entity.id = cfg;
     }
@@ -105,7 +104,7 @@ class EntityFactory{
         }
     }
     /**
-     * 获取entity对应的entity class 配置型
+     * 获取entity classname 对应的配置项
      * @param entityName    实体类名
      * @returns             实体配置
      */
@@ -147,6 +146,12 @@ class EntityFactory{
             handleDir(pa.join('/'),pathArr[pathArr.length-1]);
         }
 
+        /**
+         * 处理子目录
+         * @param dirPath   目录路径
+         * @param fileExt   文件扩展名
+         * @param deep      是否深度遍历
+         */
         function handleDir(dirPath:string,fileExt:string,deep?:boolean){
             const fsMdl = require('fs');
             const pathMdl = require('path');
@@ -171,6 +176,7 @@ class EntityFactory{
      * 通过表名获取配置对象
      * @param tblName   表名
      * @returns         entity 配置对象
+     * @since 0.2.2
      */
     public static getEntityCfgByTblName(tblName:string):IEntityCfg{
         for(let v of this.entityClasses){
@@ -180,8 +186,13 @@ class EntityFactory{
         }
     }
 
+    /**
+     * 字符串转正则表达式
+     * @param str       源串
+     * @param side      匹配的边 1 左边 2右边 3两边
+     * @returns
+     */
     private static toReg(str:string,side?:number):RegExp{
-        // 转字符串为正则表达式并加入到数组
         //替换/为\/
         str = str.replace(/\//g,'\\/');
         //替换.为\.
@@ -194,7 +205,7 @@ class EntityFactory{
                     str = '^' + str;
                     break;
                 case 2:
-                        str = str + '$';
+                    str = str + '$';
                     break;
                 case 3:
                     str = '^' + str + '$';

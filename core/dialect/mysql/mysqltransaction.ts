@@ -13,6 +13,7 @@ class MysqlTransaction extends Transaction{
             this.conn.beginTransaction((err,conn)=>{
                 if(err){
                     reject(err);
+                    return;
                 }
                 resolve(null);
             });
@@ -28,6 +29,7 @@ class MysqlTransaction extends Transaction{
                 if(err){
                     await this.rollback(); 
                     reject(err);
+                    return;
                 }
                 resolve(null);
             });
@@ -42,6 +44,7 @@ class MysqlTransaction extends Transaction{
             this.conn.rollback((err)=>{
                 if(err){
                     reject(err);
+                    return;
                 }
                 resolve(null);
             });

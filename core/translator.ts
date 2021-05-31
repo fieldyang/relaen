@@ -167,9 +167,7 @@ class Translator {
                 idValue = v;
                 idName = key[1].name;
             }
-            // mssql 设置主键自增时，不修改主键
             fv.push(fn + '=?');
-            fields.push(fn);
             values.push(v);
         }
         if (!idValue) {

@@ -6,6 +6,7 @@ import { ErrorFactory } from "./errorfactory";
 import { NativeQuery } from "./nativequery";
 import { RelaenUtil } from "./relaenutil";
 import { RelaenManager } from "./relaenmanager";
+import { Logger } from "./logger";
 /**
  * 实体代理类
  */
@@ -17,7 +18,7 @@ class EntityProxy {
      */
     public static async get(entity: IEntity, propName: string): Promise<any> {
         if (!RelaenUtil.getIdValue(entity)) {
-            console.log(ErrorFactory.getError("0105").message);
+            Logger.error(ErrorFactory.getError("0105").message);
             return null;
         }
 
@@ -25,9 +26,7 @@ class EntityProxy {
         if (pv !== undefined && pv !== null) {
             return pv;
         }
-
         let eo: IEntityCfg = EntityFactory.getClass(entity.constructor.name);
-
         //具备关联关系
         if (eo.relations.has(propName)) {
             let em: EntityManager = await getEntityManager();
@@ -41,9 +40,6 @@ class EntityProxy {
                 let query: NativeQuery;
                 sql = "select m.* from " + RelaenUtil.getTableName(eo1) + " m," + RelaenUtil.getTableName(eo) + " m1 where m." +
                     column.refName + "= m1." + column.name + " and m1." + eo.columns.get(eo.id.name).name + " = ?";
-                if (RelaenManager.dialect == 'mssql') {
-                    sql += ' order by ' + eo1.columns.get(eo1.id.name).name;
-                }
                 query = em.createNativeQuery(sql, rel.entity);
                 //设置外键id
                 query.setParameter(0, RelaenUtil.getIdValue(entity));
@@ -61,11 +57,7 @@ class EntityProxy {
                 if (!column1) {
                     throw ErrorFactory.getError('0022', [rel.entity, column1]);
                 }
-
                 let rql: string = "select * from " + RelaenUtil.getTableName(eo1) + " where " + column1.name + " = ?";
-                if (RelaenManager.dialect == 'mssql') {
-                    rql += ' order by ' + eo1.columns.get(eo1.id.name).name;
-                }
                 //查询外键对象
                 let query: NativeQuery = em.createNativeQuery(rql, rel.entity);
                 //设置查询值

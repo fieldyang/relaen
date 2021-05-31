@@ -50,8 +50,9 @@ export class MssqlDriver implements IBaseDriver {
 
     /**
      * 获取连接
+     * @returns     数据库连接
      */
-    public async getConnection() {
+    public async getConnection():Promise<any> {
         if (this.pool) {
             return await this.pool.connect(); // 创建connectionPool，执行完毕自动释放
         }
@@ -63,9 +64,7 @@ export class MssqlDriver implements IBaseDriver {
      * @param connection    数据库连接对象
      */
     public async closeConnection(connection: Connection) {
-        if (this.pool) {
-            // await this.pool.close();    自动释放
-        } else {
+        if (!this.pool) {
             await connection.conn.close();
         }
         return null;
@@ -76,8 +75,9 @@ export class MssqlDriver implements IBaseDriver {
      * @param connection    db connection
      * @param sql           待执行sql
      * @param params        参数数组
+     * @returns             结果(集)
      */
-    public async exec(connection: Connection, sql: string, params?: any[]) {
+    public async exec(connection: Connection, sql: string, params?: any[]):Promise<any> {
         let request;
         if (connection.transaction) {
             request = connection.transaction['tr'].request();

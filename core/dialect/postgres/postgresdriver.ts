@@ -44,8 +44,9 @@ export class PostgresDriver implements IBaseDriver{
 
     /**
      * 获取postgres连接
+     * @returns     数据库连接
      */
-    async getConnection() {
+    public async getConnection():Promise<any> {
         if (this.pool) {
             let conn = await this.pool.connect();
             return conn;
@@ -59,7 +60,7 @@ export class PostgresDriver implements IBaseDriver{
      * 关闭postgres连接
      * @param connection    数据库连接对象
      */
-    async closeConnection(connection: Connection) {
+    public async closeConnection(connection: Connection) {
         if (this.pool) {
             await connection.conn.release();
         } else {
@@ -73,10 +74,11 @@ export class PostgresDriver implements IBaseDriver{
      * @param connection    db connection
      * @param sql           待执行sql
      * @param params        参数数组
+     * @returns             结果(集)
      */
     public async exec(connection: Connection, sql: string, params?: any[]) {
         let r = await connection.conn.query(sql, params);
-        if (r.command == 'INSERT') {
+        if (r && r.command == 'INSERT') {
             return Object.values(r.rows[0])[0];
         }
         if (r.rows) {
