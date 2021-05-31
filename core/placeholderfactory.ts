@@ -12,11 +12,11 @@ export class PlaceholderFactory{
     private static map:Map<string,object> = new Map();
     /**
      * 添加placeholder
-     * @param dialect           
-     * @param placeholder 
-     * @param startIndex 
+     * @param dialect           数据库产品
+     * @param placeholder       占位符
+     * @param startIndex        开始索引号
      */
-    public static add(dialect:string,placeholder:string,startIndex:number){
+    public static add(dialect:string,placeholder:string,startIndex?:number){
         this.map.set(dialect,{
             ch:placeholder,
             start:startIndex

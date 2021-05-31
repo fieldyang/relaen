@@ -8,6 +8,7 @@ import { MssqlTranslator } from "./dialect/mssql/mssqltranslator";
 import { MysqlTranslator } from "./dialect/mysql/mysqltranslator";
 import { OracleTranslator } from "./dialect/oracle/oracletranslator";
 import { PostgresTranslator } from "./dialect/postgres/postgrestranslator";
+import { PlaceholderFactory } from "./placeholderfactory";
 
 /**
  * relaen 框架管理器
@@ -46,6 +47,7 @@ class RelaenManager {
         this.cache = cfg.cache === false ? false : true;
         this.initDriver();
         this.initTranslator();
+        this.initPlaceholder();
         ConnectionManager.init(cfg);
         //加载实体
         for (let path of cfg.entities) {
@@ -72,6 +74,18 @@ class RelaenManager {
         DriverFactory.add('mysql',MysqlDriver);
         DriverFactory.add('oracle',OracleDriver);
         DriverFactory.add('postgres',PostgresDriver);
+    }
+
+
+    /**
+     * 初始化各dialect对应的占位符配置
+     */
+     private static initPlaceholder(){
+        //添加到driver工厂
+        PlaceholderFactory.add('mssql','@',0);
+        PlaceholderFactory.add('mysql','?');
+        PlaceholderFactory.add('oracle',':',0);
+        PlaceholderFactory.add('postgres','$',1);
     }
     /**
      * @exclude
