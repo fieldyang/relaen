@@ -252,14 +252,22 @@ class EntityManager {
                     let sn: string = orm.id.seqName;
                     value = await ConnectionManager.driver.getSequenceValue(this,sn);
                     break;
-                case 'table':
+                case 'table':  //0.2.3
                     let fn: string = orm.id.keyName;
-                    let query: NativeQuery = this.createNativeQuery("select id_value from " + RelaenUtil.getTableName(orm.id.table,orm.schema) + " where id_name='" + fn + "'");
+                    //需要加锁
+                    let query: NativeQuery = this.createNativeQuery("select " + orm.id.valueName + " from " + 
+                        RelaenUtil.getTableName(orm.id.table,orm.schema) + " where "+ orm.id.columnName +" ='" + fn + "'");
                     let r = await query.getResult();
                     if (r) {
                         //转换为整数
                         value = parseInt(r);
+                        query = this.createNativeQuery("update " + RelaenUtil.getTableName(orm.id.table,orm.schema) + 
+                            " set " + orm.id.valueName + "="  + (++value) + 
+                            " where "+ orm.id.columnName + " ='" + fn + "'");
+                        await query.getResult();
                     }
+                    //释放锁
+                    //todo
                     break;
                 case 'uuid':
                     value = require('uuid').v1();

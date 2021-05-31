@@ -185,14 +185,22 @@ interface IEntityPKey {
 
     /**
      * 主键来源表，数据库表，专门用于主键生成
-     * 该表必须包含两个字段 
-     * id_name: string,对应某个实体主键生成器名,
-     * id_value: int,对应主键值
      */
     table?: string;
 
     /**
-     * 主键对应来源表记录项，如User实体用id_name='ID_USER'这一条记录产生主键，则keyName='ID_USER'
+     * 主键键字段名，如果generator为'table'，则该项不能为空
+     */
+    columnName?: string;
+
+    /**
+     * 主键值字段名，如果generator为'table'，则该项不能为空
+     */
+     valueName?: string;
+
+    /**
+     * 主键对应记录项名，如果generator为'table'，则该项不能为空
+     * 如User实体用columnName=ID_USER这一条记录产生主键，则keyName='ID_USER'
      */
     keyName?: string;
 

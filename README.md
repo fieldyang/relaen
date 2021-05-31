@@ -141,9 +141,40 @@ min|最小连接数|number|否|1
 参数为对象，可选，包含以下项：
 参数名|说明|类型|必填|可选值|默认值|备注
 -|-|-|-|-|-|-
-generator|主键生成策略|string|否|identity(默认，需要数据库支持自增主键),table(需要在数据库中增加主键表)|identity
+#### 参数
+参数为对象，可选，包含以下项：
+参数名|说明|类型|必填|可选值|默认值|备注
+-|-|-|-|-|-|-
+generator|主键生成策略|string|否|identity(默认，支持mysql、mssql、postgres),sequence(支持oracle、mssql、postgres),table(需要在数据库中增加主键表)|identity
 table|主键表|string|否|无|无|如果generator为'table'，则该项必填
-column|主键生成对应字段名|string|否|无|无|该字段属于主键表，如果generator为'table'，则该项不能为空
+columnName|主键键字段名|string|否|无|无|如果generator为'table'，则该项不能为空
+valueName|主键值字段名|string|否|无|无|如果generator为'table'，则该项不能为空
+keyName|主键对应记录键名|string|否|无|无|如果generator为'table'，则该项不能为空
+seqName|主键对应sequence名|否|无|无|如果generator为'sequence'，则该项不能为空
+
+#### generator=table说明
+假设主键依赖表为t_ids，该表结构如下：
+字段名|类型|是否主键
+-|-|-
+id_name|varchar(64)|是
+id_value|bigint|否
+
+假设存在数据
+
+id_name|id_value
+-|-
+group_id|1
+user_id|1
+
+则配置为:
+
+配置项|值
+-|-
+generator|table
+table|t_ids
+columnName|id_name
+valueName|id_value
+keyName|group_id
 
 ### @Column(字段注解)
 对属性进行注解，表示该属性为字段。
