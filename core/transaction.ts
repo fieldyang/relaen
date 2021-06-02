@@ -3,8 +3,15 @@ import { Connection } from "./connection";
  * 事务基类
  */
 export class Transaction{
+    /**
+     * 实际连接对象，与dialect对应
+     */
     conn:any;
-    constructor(conn){
+    /**
+     * 构造器
+     * @param conn  真实连接对象
+     */
+    constructor(conn:any){
         this.conn = conn;
     }
     /**

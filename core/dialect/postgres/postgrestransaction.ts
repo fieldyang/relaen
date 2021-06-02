@@ -6,14 +6,14 @@ import { Transaction } from "../../transaction";
  */
 export class PostgresTransaction extends Transaction {
     async begin() {
-        await this.conn.conn.query('begin');
+        await this.conn.query('begin');
     }
 
     async commit() {
-        await this.conn.conn.query('commit');
+        await this.conn.query('commit');
     }
 
     async rollback() {
-        await this.conn.conn.query('rollback');
+        await this.conn.query('rollback');
     }
 }
