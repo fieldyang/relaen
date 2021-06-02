@@ -1,8 +1,8 @@
 
 import { RelaenManager, getEntityManager, EntityManager, Query, Connection, Transaction, getConnection, NativeQuery } from "..";
 import { ConnectionManager } from "../core/connectionmanager";
-import { Shop } from "./entity_mysql/shop";
-import { UserInfo } from "./entity_mysql/userinfo";
+import { Shop } from "./entity/shop";
+import { UserInfo } from "./entity/userinfo";
 
 
 /**
@@ -340,7 +340,7 @@ RelaenManager.init({
     },
     //实体文件配置，为编译后js地址
     entities: [
-        "/test/entity/**/*.ts"
+        "/dist/test/entity/**/*.js"
     ],
     //开启以及缓存
     cache: true,
@@ -350,7 +350,7 @@ RelaenManager.init({
 
 /************* 执行测试方法 ***************/
 
-// addShop();
+addShop();
 // addShop1();
 // updShop();
 // delShop(12);
@@ -363,4 +363,4 @@ RelaenManager.init({
 // getCount();
 // linkQuery();
 // native();
-doTransaction();
+// doTransaction();

@@ -7,7 +7,7 @@ import { RelaenUtil } from "./relaenutil";
 /**
  * 翻译器
  */
-abstract class Translator {
+export class Translator {
     /**
      * 链式map {linkName:{entity:实体类名,alias:别名,co:字段对象}}
      * linkName为 实体类名[_外键引用名1_外键引用名2_...]
@@ -159,13 +159,13 @@ abstract class Translator {
             } else {
                 v = entity[key[0]];
             }
-            //值为空且不忽略空值或字段已添加，则不处理
-            if (v === null && ignoreUndefinedValue || fields.includes(fn)) {
-                continue;
-            }
             if (key[0] === orm.id.name) {
                 idValue = v;
                 idName = key[1].name;
+            }
+            //值为空且不忽略空值或字段已添加，则不处理
+            if (v === null && ignoreUndefinedValue || fields.includes(fn)) {
+                continue;
             }
             fv.push(fn + '=?');
             values.push(v);
@@ -570,5 +570,3 @@ abstract class Translator {
         return [sql, this.linkNameMap, this.whereObject ? this.whereObject[1] : undefined];
     }
 }
-
-export { Translator };

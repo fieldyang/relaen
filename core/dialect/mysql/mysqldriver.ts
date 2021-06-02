@@ -14,7 +14,7 @@ export class MysqlDriver extends BaseDriver {
      * @param cfg   连接配置
      */
     constructor(cfg: IConnectionCfg) {
-        super();
+        super(cfg);
         this.dbMdl = require('mysql');
         this.options = {
             host: cfg.host,

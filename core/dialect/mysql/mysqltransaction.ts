@@ -4,11 +4,12 @@ import { Transaction } from "../../transaction";
  * mysql 事务类
  * @since 0.2.2
  */
-class MysqlTransaction extends Transaction{
+export class MysqlTransaction extends Transaction{
     /**
      * 开始事务
      */
     async begin(){
+        super.begin();
         await new Promise((resolve,reject)=>{
             this.conn.beginTransaction((err,conn)=>{
                 if(err){
@@ -32,6 +33,7 @@ class MysqlTransaction extends Transaction{
                     return;
                 }
                 resolve(null);
+                super.commit();
             });
         });
     }
@@ -47,8 +49,8 @@ class MysqlTransaction extends Transaction{
                     return;
                 }
                 resolve(null);
+                super.rollback();
             });
         });
     }
 }
-export {MysqlTransaction}

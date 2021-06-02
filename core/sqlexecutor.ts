@@ -6,7 +6,7 @@ import { ConnectionManager } from "./connectionmanager";
 /**
  * sql执行器
  */
-class SqlExecutor {
+export class SqlExecutor {
     /**
      * 执行mysql sql语句
      * @param connection    db connection
@@ -39,14 +39,14 @@ class SqlExecutor {
                 return result;
             }
         }
+        //处理占位符
+        sql = RelaenUtil.handlePlaceholder(sql);
         //打印sql
         Logger.console("[Relaen execute sql]:\"" + sql + "\"");
         //打印参数
         if (params) {
             Logger.console("Parameters is " + JSON.stringify(params));
         }
-        //处理占位符
-        sql = RelaenUtil.handlePlaceholder(sql);
         try{
             result = await ConnectionManager.driver.exec(em.connection,sql,params);
             //执行增删改，则清空cache
@@ -62,5 +62,3 @@ class SqlExecutor {
         return result;
     }
 }
-
-export { SqlExecutor }

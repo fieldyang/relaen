@@ -1,8 +1,10 @@
 import { Connection } from "./connection";
+import { Logger } from "./logger";
+import { RelaenManager } from "./relaenmanager";
 /**
  * 事务基类
  */
-export abstract class Transaction{
+export class Transaction{
     /**
      * 实际连接对象，与dialect对应
      */
@@ -17,14 +19,26 @@ export abstract class Transaction{
     /**
      * 事务开始
      */
-    public async begin(){}
+    public async begin(){
+        if(RelaenManager.debug){
+            Logger.console('Transaction is beginning');
+        }
+    }
     /**
      * 事务提交,继承类需要重载
      */
-    public async commit(){}
+    public async commit(){
+        if(RelaenManager.debug){
+            Logger.console('Transaction is commited');
+        }
+    }
 
     /**
      * 事务回滚,继承类需要重载
      */
-    public async rollback(){}
+    public async rollback(){
+        if(RelaenManager.debug){
+            Logger.console('Transaction is rollback');
+        }
+    }
 }

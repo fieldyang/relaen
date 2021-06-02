@@ -15,7 +15,7 @@ export class MssqlDriver extends BaseDriver {
      * @param cfg   连接配置
      */
     constructor(cfg: IConnectionCfg) {
-        super();
+        super(cfg);
         this.dbMdl = require('mssql');
         this.options = {
             user: cfg.username,

@@ -4,7 +4,7 @@ import { Transaction } from "../../transaction";
  * oracle 事务类
  * @since 0.2.2
  */
-class OracleTransaction extends Transaction {
+export class OracleTransaction extends Transaction {
 
     /**
      * 开始事务
@@ -38,5 +38,3 @@ class OracleTransaction extends Transaction {
         }
     }
 }
-
-export { OracleTransaction }

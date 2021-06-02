@@ -14,7 +14,7 @@ export class PostgresDriver extends BaseDriver{
      * @param cfg   连接配置
      */
     constructor(cfg:IConnectionCfg) {
-        super();
+        super(cfg);
         this.dbMdl = require('pg');
         this.options = {
             user: cfg.username,
@@ -95,7 +95,7 @@ export class PostgresDriver extends BaseDriver{
      * @returns         sequence 值
      */
      public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
-        let query: NativeQuery = em.createNativeQuery("select nextval('" + seqName + "'");
+        let query: NativeQuery = em.createNativeQuery("select nextval('" + seqName + "')");
         let r = await query.getResult();
         if (r) {
             //转换为整数

@@ -14,7 +14,7 @@ export class OracleDriver extends BaseDriver {
      * @param cfg   连接配置
      */
     constructor(cfg: IConnectionCfg) {
-        super();
+        super(cfg);
         this.dbMdl = require('oracledb');
         this.dbMdl.autoCommit = true;
         this.options = {

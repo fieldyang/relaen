@@ -4,7 +4,7 @@ import { Transaction } from "../../transaction";
  * mssql 事务类
  * @since 0.2.2
  */
-class MssqlTransaction extends Transaction {
+export class MssqlTransaction extends Transaction {
     /**
      * 实际的transaction
      */
@@ -34,5 +34,3 @@ class MssqlTransaction extends Transaction {
         }
     }
 }
-
-export { MssqlTransaction }

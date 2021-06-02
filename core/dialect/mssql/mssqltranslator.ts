@@ -61,15 +61,17 @@ export class MssqlTranslator extends Translator{
             } else {
                 v = entity[key[0]];
             }
+            
+            if (key[0] === orm.id.name) {
+                idValue = v;
+                idName = key[1].name;
+            }
+            
             //值为空且不忽略空值或字段已添加，设置主键自增时，不修改主键
             if (v === null && ignoreUndefinedValue || fields.includes(fn) || fo.identity === true) {
                 continue;
             }
 
-            if (key[0] === orm.id.name) {
-                idValue = v;
-                idName = key[1].name;
-            }
             fv.push(fn + '=?');
             fields.push(fn);
             values.push(v);

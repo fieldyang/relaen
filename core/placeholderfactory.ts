@@ -31,7 +31,7 @@ export class PlaceholderFactory{
     public static get(index:number):string{
         let obj = this.map.get(RelaenManager.dialect);
         if(obj){
-            return obj['ch'] + obj['start'] + index;
+            return obj['ch'] + (obj['start'] + index);
         }
     }
 }
