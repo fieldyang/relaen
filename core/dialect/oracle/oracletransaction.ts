@@ -18,7 +18,7 @@ class OracleTransaction extends Transaction {
      */
     async commit() {
         try {
-            await this.conn.commit();
+            await this.conn.conn.commit();
             this.conn.autoCommit = true;
         } catch (err) {
             throw err;
@@ -30,7 +30,7 @@ class OracleTransaction extends Transaction {
      */
     async rollback() {
         try {
-            await this.conn.rollback();
+            await this.conn.conn.rollback();
             this.conn.autoCommit = true;
             return null;
         } catch (err) {

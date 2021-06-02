@@ -4,7 +4,6 @@ import { Connection } from "./connection";
  */
 export class Transaction{
     conn:any;
-
     constructor(conn){
         this.conn = conn;
     }

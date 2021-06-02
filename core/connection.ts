@@ -1,5 +1,6 @@
 import { Transaction } from "./transaction";
 import { ConnectionManager } from "./connectionmanager";
+import { TransactionFactory } from "./transactionfactory";
 /**
  * 数据库连接类
  */
@@ -47,7 +48,8 @@ class Connection{
      * 创建事务对象
      */
     public createTransaction():Transaction{
-        return new Transaction(this);
+        let trClass = TransactionFactory.get();
+        return trClass?Reflect.construct(trClass,[this]):null;
     }
 }
 

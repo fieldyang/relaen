@@ -1,14 +1,15 @@
 import { ConnectionManager } from "./connectionmanager";
 import { EntityFactory } from "./entityfactory";
 import { ErrorFactory } from "./errorfactory";
-import { Translator } from "./translator";
 import { TranslatorFactory } from "./translatorfactory";
-import { DriverFactory, MssqlDriver, MysqlDriver, OracleDriver, PostgresDriver } from "..";
+import { DriverFactory, MssqlDriver, MssqlTransaction, MysqlDriver, OracleDriver, OracleTransaction, PostgresDriver, PostgresTransaction } from "..";
 import { MssqlTranslator } from "./dialect/mssql/mssqltranslator";
 import { MysqlTranslator } from "./dialect/mysql/mysqltranslator";
 import { OracleTranslator } from "./dialect/oracle/oracletranslator";
 import { PostgresTranslator } from "./dialect/postgres/postgrestranslator";
 import { PlaceholderFactory } from "./placeholderfactory";
+import { TransactionFactory } from "./transactionfactory";
+import { MysqlTransaction } from "./dialect/mysql/mysqltransaction";
 
 /**
  * relaen 框架管理器
@@ -46,6 +47,7 @@ class RelaenManager {
         this.debug = cfg.debug || false;
         this.cache = cfg.cache === false ? false : true;
         this.initDriver();
+        this.initTransaction();
         this.initTranslator();
         this.initPlaceholder();
         ConnectionManager.init(cfg);
@@ -80,13 +82,25 @@ class RelaenManager {
     /**
      * 初始化各dialect对应的占位符配置
      */
-     private static initPlaceholder(){
-        //添加到driver工厂
+    private static initPlaceholder(){
+        //添加到placeholder工厂
         PlaceholderFactory.add('mssql','@',0);
         PlaceholderFactory.add('mysql','?');
         PlaceholderFactory.add('oracle',':',0);
         PlaceholderFactory.add('postgres','$',1);
     }
+
+    /**
+     * 初始化各dialect对应的transaction
+     */
+     private static initTransaction(){
+        //添加到transaction工厂
+        TransactionFactory.add('mssql',MssqlTransaction);
+        TransactionFactory.add('mysql',MysqlTransaction);
+        TransactionFactory.add('oracle',OracleTransaction);
+        TransactionFactory.add('postgres',PostgresTransaction);
+    }
+
     /**
      * @exclude
      * 解析实例配置文件

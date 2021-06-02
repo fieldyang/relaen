@@ -27,7 +27,7 @@ class ConnectionManager {
      * @param cfg relaen配置文件的数据库配置对象
      */
     public static init(cfg: IConnectionCfg) {
-        let driverClass:any = DriverFactory.get(RelaenManager.dialect);
+        let driverClass:any = DriverFactory.get();
         if(!driverClass){
             throw ErrorFactory.getError("0300", [RelaenManager.dialect]);
         }
@@ -43,7 +43,6 @@ class ConnectionManager {
         let conn: Connection;
         //把conn加入connectionMap
         let sid: number = RelaenThreadLocal.getThreadId();
-
         if (!sid) { //新建conn
             sid = RelaenThreadLocal.newThreadId();
         }
@@ -57,7 +56,6 @@ class ConnectionManager {
             this.connectionMap.set(sid, {
                 num: 1,
                 conn: conn
-
             });
         } else { //已存在，则只修改conn的创建数，不新建conn
             let o = this.connectionMap.get(sid);
@@ -97,7 +95,7 @@ class ConnectionManager {
 /**
  * 获取连接对象
  * @param id   创建者id，直接使用时，不需要设置该值
- * @returns    connection对象  
+ * @returns    connection对象
  */
 async function getConnection(id?: number): Promise<Connection> {
     return await ConnectionManager.createConnection(id);

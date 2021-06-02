@@ -361,6 +361,6 @@ RelaenManager.init({
 // findOne();
 // findMany();
 // getCount();
-linkQuery();
+// linkQuery();
 // native();
-// doTransaction();
+doTransaction();

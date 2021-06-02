@@ -1,4 +1,5 @@
 import { IBaseDriver } from "./ibasedriver";
+import { RelaenManager } from "./relaenmanager";
 
 /**
  * driver工厂
@@ -23,8 +24,8 @@ class DriverFactory{
      * @param name      driver名 
      * @returns         driver类 或 undefined
      */
-    public static get(name:string):any{
-        return this.drivers.get(name);
+    public static get(name?:string):any{
+        return this.drivers.get(name||RelaenManager.dialect);
     }
 }
 
