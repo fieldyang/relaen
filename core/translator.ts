@@ -7,7 +7,7 @@ import { RelaenUtil } from "./relaenutil";
 /**
  * 翻译器
  */
-class Translator {
+abstract class Translator {
     /**
      * 链式map {linkName:{entity:实体类名,alias:别名,co:字段对象}}
      * linkName为 实体类名[_外键引用名1_外键引用名2_...]

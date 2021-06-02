@@ -3,7 +3,6 @@ import { EntityFactory } from "../../entityfactory";
 import { ErrorFactory } from "../../errorfactory";
 import { RelaenUtil } from "../../relaenutil";
 import { Translator } from "../../translator";
-import { TranslatorFactory } from "../../translatorfactory";
 import { IEntity, IEntityCfg } from "../../types";
 
 /**

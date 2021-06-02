@@ -1,6 +1,6 @@
 import { Connection } from "../../connection";
 import { IConnectionCfg, IEntityCfg } from "../../types";
-import { IBaseDriver } from "../../ibasedriver";
+import { BaseDriver } from "../../basedriver";
 import { EntityFactory } from "../../entityfactory";
 import { EntityManager } from "../../entitymanager";
 import { NativeQuery } from "../../nativequery";
@@ -9,27 +9,13 @@ import { NativeQuery } from "../../nativequery";
  * mssql driver
  * @since 0.2.2
  */
-export class MssqlDriver implements IBaseDriver {
-    /**
-     * 配置
-     */
-    options: any;
-
-    /**
-     * 连接池
-     */
-    pool: any;
-
-    /**
-     * 数据库 npm 模块
-     */
-    dbMdl: any;
-
+export class MssqlDriver extends BaseDriver {
     /**
      * 构造器
      * @param cfg   连接配置
      */
     constructor(cfg: IConnectionCfg) {
+        super();
         this.dbMdl = require('mssql');
         this.options = {
             user: cfg.username,

@@ -11,7 +11,6 @@ class MssqlTransaction extends Transaction {
     private tr:any;
     /**
      * 开始事务
-     * 新建事务，替换当前实体管理中连接对象
      */
     async begin() {
         this.tr = await this.conn.transaction().begin();

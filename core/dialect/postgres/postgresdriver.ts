@@ -1,6 +1,6 @@
 import { Connection } from "../../connection";
 import { IConnectionCfg } from "../../types";
-import { IBaseDriver } from "../../ibasedriver";
+import { BaseDriver } from "../../basedriver";
 import { EntityManager } from "../../entitymanager";
 import { NativeQuery } from "../../nativequery";
 
@@ -8,27 +8,13 @@ import { NativeQuery } from "../../nativequery";
  * postgres driver
  * @since 0.2.2
  */
-export class PostgresDriver implements IBaseDriver{
-    /**
-     * 配置
-     */
-    options: any;
-
-    /**
-     * 连接池
-     */
-    pool: any;
-
-    /**
-     * 数据库 npm 模块
-     */
-    dbMdl: any;
-
+export class PostgresDriver extends BaseDriver{
     /**
      * 构造器
      * @param cfg   连接配置
      */
     constructor(cfg:IConnectionCfg) {
+        super();
         this.dbMdl = require('pg');
         this.options = {
             user: cfg.username,
@@ -95,7 +81,7 @@ export class PostgresDriver implements IBaseDriver{
      * @returns         处理后的sql
      * @since           0.2.0
      */
-    public handleStartAndLimit(sql: string, start?: number, limit?: number) {
+    public handleStartAndLimit(sql: string, start?: number, limit?: number):string {
         if (!Number.isInteger(start) || start < 0 || !Number.isInteger(limit) || limit <= 0) {
             return sql;
         }

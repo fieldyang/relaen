@@ -1,5 +1,4 @@
 import { Translator } from "../../translator";
-import { TranslatorFactory } from "../../translatorfactory";
 
 /**
  * mssql 翻译器

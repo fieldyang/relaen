@@ -1,40 +1,41 @@
 import { Connection } from "./connection";
 import { EntityManager } from "./entitymanager";
-import { IEntity } from "./types";
 
 /**
  * 数据库驱动器接口
  * 提供与dialect相关的操作，不同dialect需要实现此接口
  * @since 0.2.2
  */
-export interface IBaseDriver {
+export abstract class BaseDriver {
     /**
      * 配置
      */
-    options: any;
+    protected options: any;
 
     /**
      * 连接池
      */
-    pool: any;
+    protected pool: any;
 
     /**
      * 数据库 npm 模块
      */
-    dbMdl: any;
-
+    protected dbMdl: any;
 
     /**
      * 获取连接
      */
-    getConnection();
+    public async getConnection():Promise<any>{
+        return null;
+    }
 
-
-    /** 
+    /**
      * 关闭连接
      * @param connection    数据库连接对象
      */
-    closeConnection(connection: Connection);
+    public async closeConnection(connection: Connection){
+
+    }
 
     /**
      * 执行postgres sql语句
@@ -42,7 +43,9 @@ export interface IBaseDriver {
      * @param sql           sql语句
      * @param params        参数
      */
-    exec(connection: Connection, sql: string, params?: any[]):any;
+    public async exec(connection: Connection, sql: string, params?: any[]):Promise<any>{
+        return null;
+    }
 
     /**
      * 处理记录起始记录索引和记录数
@@ -51,7 +54,9 @@ export interface IBaseDriver {
      * @param limit     记录数
      * @returns         处理后的sql
      */
-    handleStartAndLimit(sql: string, start?: number, limit?: number);
+    public handleStartAndLimit(sql: string, start?: number, limit?: number):string{
+        return null;
+    }
 
     /**
      * 获取实体sequence，针对主键生成策略为sequence时有效
@@ -59,5 +64,7 @@ export interface IBaseDriver {
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-    getSequenceValue(em:EntityManager,seqName:string):Promise<number>;
+    getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+        return null;
+    }
 }

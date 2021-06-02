@@ -2,7 +2,7 @@ import { RelaenManager } from "./relaenmanager";
 import { Connection } from "./connection";
 import { RelaenThreadLocal } from "./threadlocal";
 import { IConnectionCfg } from "./types";
-import { IBaseDriver } from "./ibasedriver";
+import { BaseDriver } from "./basedriver";
 import { DriverFactory } from "./driverfactory";
 import { ErrorFactory } from "./errorfactory";
 
@@ -14,7 +14,7 @@ class ConnectionManager {
      * 数据库驱动器
      * @since 0.2.2
      */
-    static driver: IBaseDriver;
+    static driver: BaseDriver;
 
     /**
      * 连接map {threadId:{num:conn创建次数,conn:连接}}

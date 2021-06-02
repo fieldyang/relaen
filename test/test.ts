@@ -310,9 +310,9 @@ async function doTransaction() {
     //调用删除shop操作
     await delShops();
     //提交操作
-    await tx.commit();
+    // await tx.commit();
     //回滚，不会删除数据
-    // await tx.rollback();
+    await tx.rollback();
     //显式创建的connection，一定要显示关闭
     await conn.close();
 }

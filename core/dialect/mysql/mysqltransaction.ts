@@ -27,7 +27,7 @@ class MysqlTransaction extends Transaction{
         await new Promise((resolve,reject)=>{
             this.conn.commit(async (err)=>{
                 if(err){
-                    await this.rollback(); 
+                    await this.rollback();
                     reject(err);
                     return;
                 }

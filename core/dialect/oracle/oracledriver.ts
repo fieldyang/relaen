@@ -1,6 +1,6 @@
 import { Connection } from "../../connection";
 import { IConnectionCfg } from "../../types";
-import { IBaseDriver } from "../../ibasedriver";
+import { BaseDriver } from "../../basedriver";
 import { EntityManager } from "../../entitymanager";
 import { NativeQuery } from "../../nativequery";
 
@@ -8,27 +8,13 @@ import { NativeQuery } from "../../nativequery";
  * oracle driver
  * @since 0.2.2
  */
-export class OracleDriver implements IBaseDriver {
-    /**
-     * 配置
-     */
-    options: any;
-
-    /**
-     * 连接池
-     */
-    pool: any;
-
-    /**
-     * 数据库 npm 模块
-     */
-    dbMdl: any;
-
+export class OracleDriver extends BaseDriver {
     /**
      * 构造器
      * @param cfg   连接配置
      */
     constructor(cfg: IConnectionCfg) {
+        super();
         this.dbMdl = require('oracledb');
         this.dbMdl.autoCommit = true;
         this.options = {

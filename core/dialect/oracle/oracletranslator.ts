@@ -1,5 +1,4 @@
 import { Translator } from "../../translator";
-import { TranslatorFactory } from "../../translatorfactory";
 import { EQueryType } from "../../types";
 
 /**

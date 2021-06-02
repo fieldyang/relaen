@@ -1,34 +1,20 @@
 import { Connection } from "../../connection";
 import { ErrorFactory } from "../../errorfactory";
 import { IConnectionCfg } from "../../types";
-import { IBaseDriver } from "../../ibasedriver";
+import { BaseDriver } from "../../basedriver";
 import { EntityManager } from "../../entitymanager";
 
 /**
  * mysql driver
  * @since 0.2.2
  */
-export class MysqlDriver implements IBaseDriver {
-    /**
-     * 配置
-     */
-    options: any;
-
-    /**
-     * 连接池
-     */
-    pool: any;
-
-    /**
-     * 数据库 npm 模块
-     */
-    dbMdl: any;
-
+export class MysqlDriver extends BaseDriver {
     /**
      * 构造器
      * @param cfg   连接配置
      */
     constructor(cfg: IConnectionCfg) {
+        super();
         this.dbMdl = require('mysql');
         this.options = {
             host: cfg.host,
@@ -73,10 +59,10 @@ export class MysqlDriver implements IBaseDriver {
      * 关闭连接
      * @param connection    数据库连接对象
      */
-    public async closeConnection(connection: Connection) {
+    public async closeConnection(connection: Connection){
         if (this.pool) {
             connection.conn.release();
-            return null;
+            return Promise.resolve(null);
         } else {
             return new Promise((res, rej) => {
                 connection.conn.end(err => {
@@ -124,7 +110,7 @@ export class MysqlDriver implements IBaseDriver {
      * @returns         处理后的sql
      * @since           0.2.0
      */
-    public handleStartAndLimit(sql: string, start?: number, limit?: number) {
+    public handleStartAndLimit(sql: string, start?: number, limit?: number):string{
         if (!Number.isInteger(start) || start < 0 || !Number.isInteger(limit) || limit <= 0) {
             return sql;
         }
@@ -133,6 +119,7 @@ export class MysqlDriver implements IBaseDriver {
 
     /**
      * 获取实体sequence，针对主键生成策略为sequence时有效
+     * mysql 不支持sequence，返回0
      * @param em        entity manager
      * @param seqName   sequence name
      * @returns         sequence 值
