@@ -7,7 +7,7 @@ import { IConnectionCfg } from "./types";
  * 提供与dialect相关的操作，不同dialect需要实现此接口
  * @since 0.2.2
  */
-export class BaseDriver {
+export abstract class BaseDriver {
     /**
      * 配置
      */

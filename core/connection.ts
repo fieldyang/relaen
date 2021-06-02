@@ -49,7 +49,8 @@ class Connection{
      */
     public createTransaction():Transaction{
         let trClass = TransactionFactory.get();
-        return trClass?Reflect.construct(trClass,[this.conn]):null;
+        let con = this.conn;
+        return trClass?Reflect.construct(trClass,[con]):null;
     }
 }
 

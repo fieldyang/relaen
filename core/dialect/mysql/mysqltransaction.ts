@@ -1,21 +1,22 @@
+import { Logger } from "../../logger";
 import { Transaction } from "../../transaction";
 
 /**
  * mysql 事务类
  * @since 0.2.2
  */
-export class MysqlTransaction extends Transaction{
+class MysqlTransaction extends Transaction{
     /**
      * 开始事务
      */
-    async begin(){
-        super.begin();
+    public async begin(){
         await new Promise((resolve,reject)=>{
             this.conn.beginTransaction((err,conn)=>{
                 if(err){
                     reject(err);
                     return;
                 }
+                super.begin();
                 resolve(null);
             });
         });
@@ -24,7 +25,7 @@ export class MysqlTransaction extends Transaction{
     /**
      * 事务提交
      */
-    async commit(){
+    public async commit(){
         await new Promise((resolve,reject)=>{
             this.conn.commit(async (err)=>{
                 if(err){
@@ -32,8 +33,8 @@ export class MysqlTransaction extends Transaction{
                     reject(err);
                     return;
                 }
-                resolve(null);
                 super.commit();
+                resolve(null);
             });
         });
     }
@@ -41,16 +42,19 @@ export class MysqlTransaction extends Transaction{
     /**
      * 事务回滚
      */
-    async rollback(){
+    public async rollback(){
         await new Promise((resolve,reject)=>{
             this.conn.rollback((err)=>{
                 if(err){
                     reject(err);
                     return;
                 }
-                resolve(null);
                 super.rollback();
+                resolve(null);
             });
         });
     }
 }
+
+
+export{MysqlTransaction}

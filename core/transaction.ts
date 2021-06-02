@@ -1,10 +1,12 @@
 import { Connection } from "./connection";
 import { Logger } from "./logger";
+import { PlaceholderFactory } from "./placeholderfactory";
 import { RelaenManager } from "./relaenmanager";
+import { RelaenUtil } from "./relaenutil";
 /**
  * 事务基类
  */
-export class Transaction{
+abstract class Transaction{
     /**
      * 实际连接对象，与dialect对应
      */
@@ -20,25 +22,25 @@ export class Transaction{
      * 事务开始
      */
     public async begin(){
-        if(RelaenManager.debug){
-            Logger.console('Transaction is beginning');
-        }
+        // Logger.console('Transaction is beginning');
+        console.log('Transaction is began.');
     }
     /**
      * 事务提交,继承类需要重载
      */
     public async commit(){
-        if(RelaenManager.debug){
-            Logger.console('Transaction is commited');
-        }
+        // Logger.console('Transaction is commited');
+        console.log('Transaction is commited.');
     }
 
     /**
      * 事务回滚,继承类需要重载
      */
-    public async rollback(){
-        if(RelaenManager.debug){
-            Logger.console('Transaction is rollback');
-        }
+    public rollback(){
+        // if(RelaenManager.debug){
+        //     Logger.console('Transaction is rollback');
+        // }
+        console.log('Transaction is rolled back.');
     }
 }
+export {Transaction}

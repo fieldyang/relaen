@@ -8,10 +8,8 @@ import { NativeQuery } from "./nativequery";
 import { EntityManagerFactory } from "./entitymanagerfactory";
 import { RelaenUtil } from "./relaenutil";
 import { BaseEntity } from "./baseentity";
-import { RelaenManager } from "./relaenmanager";
 import { TranslatorFactory } from "./translatorfactory";
 import { ConnectionManager } from "./connectionmanager";
-
 
 /**
  * 实体管理器

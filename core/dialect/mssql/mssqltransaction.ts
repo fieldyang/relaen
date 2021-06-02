@@ -14,6 +14,7 @@ export class MssqlTransaction extends Transaction {
      */
     async begin() {
         this.tr = await this.conn.transaction().begin();
+        super.begin();
     }
 
     /**
@@ -22,6 +23,7 @@ export class MssqlTransaction extends Transaction {
     async commit() {
         if (this.tr) {
             await this.tr.commit();
+            super.commit();
         }
     }
 
@@ -31,6 +33,7 @@ export class MssqlTransaction extends Transaction {
     async rollback() {
         if (this.tr) {
             await this.tr.rollback();
+            super.rollback();
         }
     }
 }

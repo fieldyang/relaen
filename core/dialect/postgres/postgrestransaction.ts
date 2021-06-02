@@ -10,6 +10,7 @@ export class PostgresTransaction extends Transaction {
      */
     async begin() {
         await this.conn.query('begin');
+        super.begin();
     }
 
     /**
@@ -17,6 +18,7 @@ export class PostgresTransaction extends Transaction {
      */
     async commit() {
         await this.conn.query('commit');
+        super.commit();
     }
 
     /**
@@ -24,5 +26,6 @@ export class PostgresTransaction extends Transaction {
      */
     async rollback() {
         await this.conn.query('rollback');
+        super.rollback();
     }
 }

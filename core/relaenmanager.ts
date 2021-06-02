@@ -2,7 +2,6 @@ import { ConnectionManager } from "./connectionmanager";
 import { EntityFactory } from "./entityfactory";
 import { ErrorFactory } from "./errorfactory";
 import { TranslatorFactory } from "./translatorfactory";
-import { DriverFactory, MssqlDriver, MssqlTransaction, MysqlDriver, OracleDriver, OracleTransaction, PostgresDriver, PostgresTransaction } from "..";
 import { MssqlTranslator } from "./dialect/mssql/mssqltranslator";
 import { MysqlTranslator } from "./dialect/mysql/mysqltranslator";
 import { OracleTranslator } from "./dialect/oracle/oracletranslator";
@@ -10,6 +9,14 @@ import { PostgresTranslator } from "./dialect/postgres/postgrestranslator";
 import { PlaceholderFactory } from "./placeholderfactory";
 import { TransactionFactory } from "./transactionfactory";
 import { MysqlTransaction } from "./dialect/mysql/mysqltransaction";
+import { DriverFactory } from "./driverfactory";
+import { MssqlDriver } from "./dialect/mssql/mssqldriver";
+import { MysqlDriver } from "./dialect/mysql/mysqldriver";
+import { OracleDriver } from "./dialect/oracle/oracledriver";
+import { PostgresDriver } from "./dialect/postgres/postgresdriver";
+import { MssqlTransaction } from "./dialect/mssql/mssqltransaction";
+import { OracleTransaction } from "./dialect/oracle/oracletransaction";
+import { PostgresTransaction } from "./dialect/postgres/postgrestransaction";
 
 /**
  * relaen 框架管理器

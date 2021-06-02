@@ -350,7 +350,7 @@ RelaenManager.init({
 
 /************* 执行测试方法 ***************/
 
-addShop();
+// addShop();
 // addShop1();
 // updShop();
 // delShop(12);
@@ -359,7 +359,7 @@ addShop();
 // cache(1);
 // lazyLoad(1);
 // findOne();
-// findMany();
+findMany();
 // getCount();
 // linkQuery();
 // native();
