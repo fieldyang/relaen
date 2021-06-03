@@ -322,22 +322,22 @@ async function doTransaction() {
  */
 RelaenManager.init({
     //数据库产品名
-    dialect: "mysql",
+    dialect: "or",
     //数据库服务器地址
-    host: "localhost",
+    host: "localhost\\SQLEXPRESS",
     //端口
-    port: 3306,
+    port: 1433,
     //用户名
-    username: "root",
+    username: "sa",
     //密码
-    password: "field",
+    password: "root",
     //数据库名
     database: "test",
     //连接池，可选
-    pool: {
-        min: 0,
-        max: 10
-    },
+    // pool: {
+    //     min: 0,
+    //     max: 10
+    // },
     //实体文件配置，为编译后js地址
     entities: [
         "/dist/test/entity/**/*.js"

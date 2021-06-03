@@ -33,11 +33,10 @@
   },
   "homepage": "https://github.com/relaen/relaents",
   "dependencies": {
-    
+    "@types/node": "^15.6.2",
+    "mssql": "^7.1.0"
   },
-  "devDependencies": {
-    
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=13.10.0"
   },
