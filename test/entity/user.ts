@@ -2,7 +2,7 @@ import {BaseEntity,Entity,Column,Id,OneToMany,EntityProxy} from '../..';
 import {GroupUser} from './groupuser';
 import {UserInfo} from './userinfo';
 
-@Entity("t_user",'test')
+@Entity("t_user")
 export class User extends BaseEntity{
 	@Id()
 	@Column({

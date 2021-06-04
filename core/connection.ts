@@ -30,7 +30,8 @@ class Connection{
     /**
      * 是否自动提交
      */
-    autoCommit: boolean = true;
+    // oracle 中不使用
+    // autoCommit: boolean = true;
 
     constructor(conn){
         this.conn = conn;

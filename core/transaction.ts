@@ -36,7 +36,7 @@ abstract class Transaction{
     /**
      * 事务回滚,继承类需要重载
      */
-    public rollback(){
+    public async rollback(){
         // if(RelaenManager.debug){
         //     Logger.console('Transaction is rollback');
         // }

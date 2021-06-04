@@ -309,7 +309,7 @@ class Query {
         this.translator.handleFrom(tables);
         return this;
     }
-    // TODO between in 
+  
     /**
      * 添加where条件
      * @param params    参数对象{paramName1:paramValue1,paramName2:{value:paramValue2,rel:'>',before:'(',after:'and'}...}

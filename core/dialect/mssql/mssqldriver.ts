@@ -20,9 +20,13 @@ export class MssqlDriver extends BaseDriver {
         this.options = {
             user: cfg.username,
             password: cfg.password,
-            server: cfg.host,
+            server: cfg.host ,
             port: cfg.port,
-            database: cfg.database
+            database: cfg.database,
+            options: {
+                encrypt: false, // for azure
+                trustServerCertificate: false // change to true for local dev / self-signed certs
+            }
         };
         if (cfg.pool && cfg.pool.max) {
             this.options['pool'] = {
@@ -65,8 +69,8 @@ export class MssqlDriver extends BaseDriver {
      */
     public async exec(connection: Connection, sql: string, params?: any[]):Promise<any> {
         let request;
-        if (connection.transaction) {
-            request = connection.transaction['tr'].request();
+        if (connection.conn.mssqlTransaction) {
+            request = connection.conn.mssqlTransaction.request();
         } else {
             request = connection.conn.request();
         }

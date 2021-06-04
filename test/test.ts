@@ -2,6 +2,7 @@
 import { RelaenManager, getEntityManager, EntityManager, Query, Connection, Transaction, getConnection, NativeQuery } from "..";
 import { ConnectionManager } from "../core/connectionmanager";
 import { Shop } from "./entity/shop";
+import { Test } from "./entity/test";
 import { UserInfo } from "./entity/userinfo";
 
 
@@ -322,22 +323,22 @@ async function doTransaction() {
  */
 RelaenManager.init({
     //数据库产品名
-    dialect: "or",
+    dialect: "mysql",
     //数据库服务器地址
-    host: "localhost\\SQLEXPRESS",
+    host: "localhost",
     //端口
-    port: 1433,
+    port: 3306,
     //用户名
-    username: "sa",
+    username: "root",
     //密码
     password: "root",
     //数据库名
     database: "test",
     //连接池，可选
-    // pool: {
-    //     min: 0,
-    //     max: 10
-    // },
+    pool: {
+        min: 0,
+        max: 10
+    },
     //实体文件配置，为编译后js地址
     entities: [
         "/dist/test/entity/**/*.js"
@@ -359,8 +360,8 @@ RelaenManager.init({
 // cache(1);
 // lazyLoad(1);
 // findOne();
-findMany();
+// findMany();
 // getCount();
 // linkQuery();
 // native();
-// doTransaction();
+doTransaction();

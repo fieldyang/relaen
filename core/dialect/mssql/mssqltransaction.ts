@@ -14,6 +14,7 @@ export class MssqlTransaction extends Transaction {
      */
     async begin() {
         this.tr = await this.conn.transaction().begin();
+        this.conn['mssqlTransaction'] = this.tr;
         super.begin();
     }
 

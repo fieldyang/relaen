@@ -34,7 +34,10 @@
   "homepage": "https://github.com/relaen/relaents",
   "dependencies": {
     "@types/node": "^15.6.2",
-    "mssql": "^7.1.0"
+    "mssql": "^7.1.0",
+    "oracledb": "^5.1.0",
+    "pg": "^8.6.0",
+    "tedious": "^11.0.9"
   },
   "devDependencies": {},
   "engines": {

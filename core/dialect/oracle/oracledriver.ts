@@ -32,7 +32,7 @@ export class OracleDriver extends BaseDriver {
      * 获取连接
      * @returns     connection
      */
-    public async getConnection():Promise<any> {
+    public async getConnection(): Promise<any> {
         // 使用池连接
         if (this.options['poolMax']) {
             if (!this.pool) {
@@ -64,14 +64,17 @@ export class OracleDriver extends BaseDriver {
      * @returns             结果(集)
      */
     public async exec(connection: Connection, sql: string, params?: any[]) {
-        let r = await connection.conn.execute(sql, params, { autoCommit: connection.autoCommit, outFormat: 4002 });
+        // 默认自动提交
+        let autoCommit = connection.conn.autoCommit === undefined ? true : connection.conn.autoCommit;
+        let r = await connection.conn.execute(sql, params, { autoCommit: autoCommit, outFormat: 4002 });
         // 为查询时返回查询rows，与mysql一致
         if (r.rows) {
             return r.rows;
         }
-        if (r.lastRowid) {
-            return r.lastRowid;
-        }
+        // 未使用oracle Rowid
+        // if (r.lastRowid) {
+        //     return r.lastRowid;
+        // }
         return r;
     }
 
@@ -96,12 +99,13 @@ export class OracleDriver extends BaseDriver {
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-    public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+    public async getSequenceValue(em: EntityManager, seqName: string): Promise<number> {
         let query: NativeQuery = em.createNativeQuery('select "' + seqName + '".nextval from dual');
-        let r = await query.getResult();
-        if (r) {
+        // select "SEQ_SHOP".nextval from dual OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY 查询不能加分页
+        let r = await query.getResultList(-1, -1);
+        if (r[0].NEXTVAL) {
             //转换为整数
-            return parseInt(r);
+            return parseInt(r[0].NEXTVAL);
         }
         return 0;
     }
