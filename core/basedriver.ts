@@ -5,7 +5,7 @@ import { IConnectionCfg } from "./types";
 /**
  * 数据库驱动器接口
  * 提供与dialect相关的操作，不同dialect需要实现此接口
- * @since 0.2.2
+ * @since 0.2.3
  */
 export abstract class BaseDriver {
     /**

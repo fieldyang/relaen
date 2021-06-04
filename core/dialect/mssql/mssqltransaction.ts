@@ -2,7 +2,7 @@ import { Transaction } from "../../transaction";
 
 /**
  * mssql 事务类
- * @since 0.2.2
+ * @since 0.2.3
  */
 export class MssqlTransaction extends Transaction {
     /**

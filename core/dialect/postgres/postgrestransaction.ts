@@ -2,7 +2,7 @@ import { Transaction } from "../../transaction";
 
 /**
  * postgres 事务类
- * @since 0.2.2
+ * @since 0.2.3
  */
 export class PostgresTransaction extends Transaction {
     /**

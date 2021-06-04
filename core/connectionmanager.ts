@@ -12,7 +12,7 @@ import { ErrorFactory } from "./errorfactory";
 class ConnectionManager {
     /**
      * 数据库驱动器
-     * @since 0.2.2
+     * @since 0.2.3
      */
     static driver: BaseDriver;
 

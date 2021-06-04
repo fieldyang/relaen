@@ -7,7 +7,7 @@ import { NativeQuery } from "../../nativequery";
 
 /**
  * mssql driver
- * @since 0.2.2
+ * @since 0.2.3
  */
 export class MssqlDriver extends BaseDriver {
     /**
