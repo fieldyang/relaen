@@ -2,7 +2,6 @@
 import { RelaenManager, getEntityManager, EntityManager, Query, Connection, Transaction, getConnection, NativeQuery } from "..";
 import { ConnectionManager } from "../core/connectionmanager";
 import { Shop } from "./entity/shop";
-import { Test } from "./entity/test";
 import { UserInfo } from "./entity/userinfo";
 
 
@@ -364,4 +363,8 @@ RelaenManager.init({
 // getCount();
 // linkQuery();
 // native();
+<<<<<<< HEAD
 doTransaction();
+=======
+doTransaction();
+>>>>>>> d8e4b4e573c8a2a05286191a0a2d14d5a9b132dd

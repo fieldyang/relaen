@@ -5,7 +5,7 @@ import { EQueryType, IEntityCfg } from "../../types";
 
 /**
  * postgres 翻译器
- * @since 0.2.2
+ * @since 0.2.3
  */
 export class PostgresTranslator extends Translator{
     /**

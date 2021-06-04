@@ -3,7 +3,7 @@ import { Transaction } from "../../transaction";
 
 /**
  * mysql 事务类
- * @since 0.2.2
+ * @since 0.2.3
  */
 class MysqlTransaction extends Transaction{
     /**

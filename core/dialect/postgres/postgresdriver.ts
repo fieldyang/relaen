@@ -6,7 +6,7 @@ import { NativeQuery } from "../../nativequery";
 
 /**
  * postgres driver
- * @since 0.2.2
+ * @since 0.2.3
  */
 export class PostgresDriver extends BaseDriver{
     /**
