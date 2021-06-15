@@ -1,14 +1,14 @@
 import { Connection } from "../../connection";
 import { ErrorFactory } from "../../errorfactory";
 import { IConnectionCfg } from "../../types";
-import { BaseDriver } from "../../basedriver";
+import { BaseProvider } from "../../baseprovider";
 import { EntityManager } from "../../entitymanager";
 
 /**
- * mysql driver
+ * mysql provider
  * @since 0.2.3
  */
-export class MysqlDriver extends BaseDriver {
+export class MysqlProvider extends BaseProvider {
     /**
      * 构造器
      * @param cfg   连接配置

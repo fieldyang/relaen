@@ -1,19 +1,17 @@
-import { Connection } from "../../connection";
-import { IConnectionCfg } from "../../types";
-import { BaseDriver } from "../../basedriver";
-import { EntityManager } from "../../entitymanager";
-import { NativeQuery } from "../../nativequery";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PostgresProvider = void 0;
+const baseprovider_1 = require("../../baseprovider");
 /**
- * postgres driver
+ * postgres provider
  * @since 0.2.3
  */
-export class PostgresDriver extends BaseDriver{
+class PostgresProvider extends baseprovider_1.BaseProvider {
     /**
      * 构造器
      * @param cfg   连接配置
      */
-    constructor(cfg:IConnectionCfg) {
+    constructor(cfg) {
         super(cfg);
         this.dbMdl = require('pg');
         this.options = {
@@ -27,12 +25,11 @@ export class PostgresDriver extends BaseDriver{
             this.pool = new this.dbMdl.Pool(this.options);
         }
     }
-
     /**
      * 获取postgres连接
      * @returns     数据库连接
      */
-    public async getConnection():Promise<any> {
+    async getConnection() {
         if (this.pool) {
             let conn = await this.pool.connect();
             return conn;
@@ -41,20 +38,19 @@ export class PostgresDriver extends BaseDriver{
         await conn.connect();
         return conn;
     }
-
     /**
      * 关闭postgres连接
      * @param connection    数据库连接对象
      */
-    public async closeConnection(connection: Connection) {
+    async closeConnection(connection) {
         if (this.pool) {
             await connection.conn.release();
-        } else {
+        }
+        else {
             await connection.conn.end();
         }
         return null;
     }
-
     /**
      * 执行sql语句
      * @param connection    db connection
@@ -62,7 +58,7 @@ export class PostgresDriver extends BaseDriver{
      * @param params        参数数组
      * @returns             结果(集)
      */
-    public async exec(connection: Connection, sql: string, params?: any[]) {
+    async exec(connection, sql, params) {
         let r = await connection.conn.query(sql, params);
         if (r && r.command == 'INSERT') {
             return Object.values(r.rows[0])[0];
@@ -72,7 +68,6 @@ export class PostgresDriver extends BaseDriver{
         }
         return r;
     }
-
     /**
      * 处理记录起始记录索引和记录数
      * @param sql       sql
@@ -81,21 +76,20 @@ export class PostgresDriver extends BaseDriver{
      * @returns         处理后的sql
      * @since           0.2.0
      */
-    public handleStartAndLimit(sql: string, start?: number, limit?: number):string {
+    handleStartAndLimit(sql, start, limit) {
         if (!Number.isInteger(start) || start < 0 || !Number.isInteger(limit) || limit <= 0) {
             return sql;
         }
         return sql + ' LIMIT ' + limit + ' OFFSET ' + start;
     }
-
     /**
      * 获取实体sequence，针对主键生成策略为sequence时有效
      * @param em        entity manager
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-     public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
-        let query: NativeQuery = em.createNativeQuery("select nextval('" + seqName + "')");
+    async getSequenceValue(em, seqName) {
+        let query = em.createNativeQuery("select nextval('" + seqName + "')");
         let r = await query.getResult();
         if (r) {
             //转换为整数
@@ -104,3 +98,5 @@ export class PostgresDriver extends BaseDriver{
         return 0;
     }
 }
+exports.PostgresProvider = PostgresProvider;
+//# sourceMappingURL=postgresprovider.js.map

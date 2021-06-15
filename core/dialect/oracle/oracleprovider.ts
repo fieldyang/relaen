@@ -1,14 +1,14 @@
 import { Connection } from "../../connection";
 import { IConnectionCfg } from "../../types";
-import { BaseDriver } from "../../basedriver";
+import { BaseProvider } from "../../baseprovider";
 import { EntityManager } from "../../entitymanager";
 import { NativeQuery } from "../../nativequery";
 
 /**
- * oracle driver
+ * oracle provider
  * @since 0.2.3
  */
-export class OracleDriver extends BaseDriver {
+export class OracleProvider extends BaseProvider {
     /**
      * 构造器
      * @param cfg   连接配置

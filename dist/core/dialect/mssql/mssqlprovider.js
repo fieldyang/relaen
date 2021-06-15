@@ -1,30 +1,28 @@
-import { Connection } from "../../connection";
-import { IConnectionCfg, IEntityCfg } from "../../types";
-import { BaseDriver } from "../../basedriver";
-import { EntityFactory } from "../../entityfactory";
-import { EntityManager } from "../../entitymanager";
-import { NativeQuery } from "../../nativequery";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MssqlProvider = void 0;
+const baseprovider_1 = require("../../baseprovider");
+const entityfactory_1 = require("../../entityfactory");
 /**
- * mssql driver
+ * mssql provider
  * @since 0.2.3
  */
-export class MssqlDriver extends BaseDriver {
+class MssqlProvider extends baseprovider_1.BaseProvider {
     /**
      * 构造器
      * @param cfg   连接配置
      */
-    constructor(cfg: IConnectionCfg) {
+    constructor(cfg) {
         super(cfg);
         this.dbMdl = require('mssql');
         this.options = {
             user: cfg.username,
             password: cfg.password,
-            server: cfg.host ,
+            server: cfg.host,
             port: cfg.port,
             database: cfg.database,
             options: {
-                encrypt: false, // for azure
+                encrypt: false,
                 trustServerCertificate: false // change to true for local dev / self-signed certs
             }
         };
@@ -33,33 +31,30 @@ export class MssqlDriver extends BaseDriver {
                 max: cfg.pool.max || 10,
                 min: cfg.pool.min || 0,
                 idleTimeoutMillis: 30000
-            }
+            };
             this.pool = new this.dbMdl.ConnectionPool(this.options);
         }
     }
-
     /**
      * 获取连接
      * @returns     数据库连接
      */
-    public async getConnection():Promise<any> {
+    async getConnection() {
         if (this.pool) {
             return await this.pool.connect(); // 创建connectionPool，执行完毕自动释放
         }
         return await this.dbMdl.connect(this.options);
     }
-
     /**
      * 关闭连接
      * @param connection    数据库连接对象
      */
-    public async closeConnection(connection: Connection) {
+    async closeConnection(connection) {
         if (!this.pool) {
             await connection.conn.close();
         }
         return null;
     }
-
     /**
      * 执行sql语句
      * @param connection    db connection
@@ -67,11 +62,12 @@ export class MssqlDriver extends BaseDriver {
      * @param params        参数数组
      * @returns             结果(集)
      */
-    public async exec(connection: Connection, sql: string, params?: any[]):Promise<any> {
+    async exec(connection, sql, params) {
         let request;
         if (connection.conn.mssqlTransaction) {
             request = connection.conn.mssqlTransaction.request();
-        } else {
+        }
+        else {
             request = connection.conn.request();
         }
         params = params || [];
@@ -87,7 +83,6 @@ export class MssqlDriver extends BaseDriver {
         }
         return r;
     }
-
     /**
      * 处理记录起始记录索引和记录数
      * @param sql       sql
@@ -95,31 +90,30 @@ export class MssqlDriver extends BaseDriver {
      * @param limit     记录数
      * @returns         处理后的sql
      */
-    public handleStartAndLimit(sql: string, start?: number, limit?: number):string{
+    handleStartAndLimit(sql, start, limit) {
         if (!Number.isInteger(start) || start < 0 || !Number.isInteger(limit) || limit <= 0) {
             return sql;
         }
         //无order by 则需要添加
-        if(!/order\s+by/i.test(sql)){
+        if (!/order\s+by/i.test(sql)) {
             let r = /from\s+\w+/.exec(sql);
-            if(!r){
+            if (!r) {
                 return sql;
             }
-            let tbl = r[0].replace(/from\s+/,'');
-            let cfg:IEntityCfg = EntityFactory.getEntityCfgByTblName(tbl);
+            let tbl = r[0].replace(/from\s+/, '');
+            let cfg = entityfactory_1.EntityFactory.getEntityCfgByTblName(tbl);
             sql += ' order by ' + cfg.columns.get(cfg.id.name).name + ' asc ';
         }
         return sql + ' OFFSET ' + start + ' ROWS FETCH NEXT ' + limit + ' ROWS ONLY';
     }
-
     /**
      * 获取实体sequence，针对主键生成策略为sequence时有效
      * @param em        entity manager
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-    public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
-        let query: NativeQuery = em.createNativeQuery("select next value for " + seqName);
+    async getSequenceValue(em, seqName) {
+        let query = em.createNativeQuery("select next value for " + seqName);
         let r = await query.getResult();
         if (r) {
             //转换为整数
@@ -128,3 +122,5 @@ export class MssqlDriver extends BaseDriver {
         return 0;
     }
 }
+exports.MssqlProvider = MssqlProvider;
+//# sourceMappingURL=mssqlprovider.js.map

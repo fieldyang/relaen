@@ -9,11 +9,11 @@ import { PostgresTranslator } from "./dialect/postgres/postgrestranslator";
 import { PlaceholderFactory } from "./placeholderfactory";
 import { TransactionFactory } from "./transactionfactory";
 import { MysqlTransaction } from "./dialect/mysql/mysqltransaction";
-import { DriverFactory } from "./driverfactory";
-import { MssqlDriver } from "./dialect/mssql/mssqldriver";
-import { MysqlDriver } from "./dialect/mysql/mysqldriver";
-import { OracleDriver } from "./dialect/oracle/oracledriver";
-import { PostgresDriver } from "./dialect/postgres/postgresdriver";
+import { ProviderFactory } from "./providerfactory";
+import { MssqlProvider } from "./dialect/mssql/mssqlprovider";
+import { MysqlProvider } from "./dialect/mysql/mysqlprovider";
+import { OracleProvider } from "./dialect/oracle/oracleprovider";
+import { PostgresProvider } from "./dialect/postgres/postgresprovider";
 import { MssqlTransaction } from "./dialect/mssql/mssqltransaction";
 import { OracleTransaction } from "./dialect/oracle/oracletransaction";
 import { PostgresTransaction } from "./dialect/postgres/postgrestransaction";
@@ -53,7 +53,7 @@ class RelaenManager {
         this.dialect = cfg.dialect || 'mysql';
         this.debug = cfg.debug || false;
         this.cache = cfg.cache === false ? false : true;
-        this.initDriver();
+        this.initProvider();
         this.initTransaction();
         this.initTranslator();
         this.initPlaceholder();
@@ -78,11 +78,11 @@ class RelaenManager {
     /**
      * 初始化各dialect对应的driver
      */
-    private static initDriver(){
-        DriverFactory.add('mssql',MssqlDriver);
-        DriverFactory.add('mysql',MysqlDriver);
-        DriverFactory.add('oracle',OracleDriver);
-        DriverFactory.add('postgres',PostgresDriver);
+    private static initProvider(){
+        ProviderFactory.add('mssql',MssqlProvider);
+        ProviderFactory.add('mysql',MysqlProvider);
+        ProviderFactory.add('oracle',OracleProvider);
+        ProviderFactory.add('postgres',PostgresProvider);
     }
 
 

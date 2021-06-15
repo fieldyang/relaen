@@ -1,12 +1,13 @@
-import { Logger } from "./logger";
-import { EntityManager } from "./entitymanager";
-import { RelaenUtil } from "./relaenutil";
-import { ConnectionManager } from "./connectionmanager";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SqlExecutor = void 0;
+const logger_1 = require("./logger");
+const relaenutil_1 = require("./relaenutil");
+const connectionmanager_1 = require("./connectionmanager");
 /**
  * sql执行器
  */
-export class SqlExecutor {
+class SqlExecutor {
     /**
      * 执行mysql sql语句
      * @param connection    db connection
@@ -16,17 +17,16 @@ export class SqlExecutor {
      * @param limit         最大记录行
      * @returns             执行结果或undefined
      */
-    public static async exec(em: EntityManager, sql: string, params?: any[], start?: number, limit?: number): Promise<any> {
+    static async exec(em, sql, params, start, limit) {
         sql = sql.trim();
         //sql类型：0:查询 1:增删改
-        let sqlType: number = ['insert', 'update', 'delete'].includes(sql.substr(0, 6).toLowerCase()) ? 1 : 0;
-
+        let sqlType = ['insert', 'update', 'delete'].includes(sql.substr(0, 6).toLowerCase()) ? 1 : 0;
         //缓存key，构建方式：sql_paramsvaluestring
-        let key: string;
+        let key;
         //结果
-        let result: any;
-        if (sqlType === 0) {  //查询可从缓存中获取
-            sql = ConnectionManager.provider.handleStartAndLimit(sql, start, limit);
+        let result;
+        if (sqlType === 0) { //查询可从缓存中获取
+            sql = connectionmanager_1.ConnectionManager.provider.handleStartAndLimit(sql, start, limit);
             key = sql;
             //构造缓存key
             if (params) {
@@ -40,25 +40,29 @@ export class SqlExecutor {
             }
         }
         //处理占位符
-        sql = RelaenUtil.handlePlaceholder(sql);
+        sql = relaenutil_1.RelaenUtil.handlePlaceholder(sql);
         //打印sql
-        Logger.console("[Relaen execute sql]:\"" + sql + "\"");
+        logger_1.Logger.console("[Relaen execute sql]:\"" + sql + "\"");
         //打印参数
         if (params) {
-            Logger.console("Parameters is " + JSON.stringify(params));
+            logger_1.Logger.console("Parameters is " + JSON.stringify(params));
         }
-        try{
-            result = await ConnectionManager.provider.exec(em.connection,sql,params);
+        try {
+            result = await connectionmanager_1.ConnectionManager.provider.exec(em.connection, sql, params);
             //执行增删改，则清空cache
             if (sqlType === 1) {
                 em.clearCache();
-            } else {  //添加到缓存
+            }
+            else { //添加到缓存
                 em.addToCache(key, result);
             }
-        } catch (e) {
+        }
+        catch (e) {
             throw ("[Relaen execute sql] Error:\"" + e.message + "\"");
         }
-        Logger.console("[Relaen execute sql]:\"OK\"");
+        logger_1.Logger.console("[Relaen execute sql]:\"OK\"");
         return result;
     }
 }
+exports.SqlExecutor = SqlExecutor;
+//# sourceMappingURL=sqlexecutor.js.map

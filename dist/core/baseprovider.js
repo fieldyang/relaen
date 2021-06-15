@@ -1,56 +1,35 @@
-import { Connection } from "./connection";
-import { EntityManager } from "./entitymanager";
-import { IConnectionCfg } from "./types";
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseProvider = void 0;
 /**
  * 数据库驱动器接口
  * 提供与dialect相关的操作，不同dialect需要实现此接口
  * @since 0.2.3
  */
-export abstract class BaseDriver {
-    /**
-     * 配置
-     */
-    protected options: any;
-
-    /**
-     * 连接池
-     */
-    protected pool: any;
-
-    /**
-     * 数据库 npm 模块
-     */
-    protected dbMdl: any;
-
-    constructor(cfg:IConnectionCfg){
-        
+class BaseProvider {
+    constructor(cfg) {
     }
     /**
      * 获取连接
      */
-    public async getConnection():Promise<any>{
+    async getConnection() {
         return null;
     }
-
     /**
      * 关闭连接
      * @param connection    数据库连接对象
      */
-    public async closeConnection(connection: Connection){
-
+    async closeConnection(connection) {
     }
-
     /**
      * 执行postgres sql语句
      * @param connection    数据库连接
      * @param sql           sql语句
      * @param params        参数
      */
-    public async exec(connection: Connection, sql: string, params?: any[]):Promise<any>{
+    async exec(connection, sql, params) {
         return null;
     }
-
     /**
      * 处理记录起始记录索引和记录数
      * @param sql       sql
@@ -58,17 +37,18 @@ export abstract class BaseDriver {
      * @param limit     记录数
      * @returns         处理后的sql
      */
-    public handleStartAndLimit(sql: string, start?: number, limit?: number):string{
+    handleStartAndLimit(sql, start, limit) {
         return null;
     }
-
     /**
      * 获取实体sequence，针对主键生成策略为sequence时有效
      * @param em        entity manager
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-    getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+    getSequenceValue(em, seqName) {
         return null;
     }
 }
+exports.BaseProvider = BaseProvider;
+//# sourceMappingURL=baseprovider.js.map

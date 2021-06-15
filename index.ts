@@ -1,9 +1,9 @@
 export * from './core/decorator/decorator';
-export * from './core/basedriver';
+export * from './core/baseprovider';
 export * from './core/baseentity';
 export * from './core/connection';
 export * from './core/connectionmanager';
-export * from './core/driverfactory';
+export * from './core/providerfactory';
 export * from './core/entityfactory';
 export * from './core/entitymanager';
 export * from './core/entitymanagerfactory';
@@ -25,15 +25,15 @@ export * from './core/translatorfactory';
 export * from './core/types';
 
 /**dialect correspond */
-export * from './core/dialect/mssql/mssqldriver';
+export * from './core/dialect/mssql/mssqlprovider';
 export * from './core/dialect/mssql/mssqltransaction';
 export * from './core/dialect/mssql/mssqltranslator';
-export * from './core/dialect/mysql/mysqldriver';
+export * from './core/dialect/mysql/mysqlprovider';
 export * from './core/dialect/mysql/mysqltransaction';
 export * from './core/dialect/mysql/mysqltranslator';
-export * from './core/dialect/oracle/oracledriver';
+export * from './core/dialect/oracle/oracleprovider';
 export * from './core/dialect/oracle/oracletransaction';
 export * from './core/dialect/oracle/oracletranslator';
-export * from './core/dialect/postgres/postgresdriver';
+export * from './core/dialect/postgres/postgresprovider';
 export * from './core/dialect/postgres/postgrestransaction';
 export * from './core/dialect/oracle/oracletranslator';

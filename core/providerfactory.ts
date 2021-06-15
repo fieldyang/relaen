@@ -3,19 +3,19 @@ import { RelaenManager } from "./relaenmanager";
 /**
  * driver工厂
  */
-class DriverFactory{
+export class ProviderFactory{
     /**
      * driver集合
      */
-    private static drivers:Map<string,any> = new Map();
+    private static providers:Map<string,any> = new Map();
 
     /**
      * 添加driver
      * @param name      driver 名
      * @param driver    driver 类
      */
-    public static add(name:string,driver:any){
-        this.drivers.set(name,driver);
+    public static add(name:string,provider:any){
+        this.providers.set(name,provider);
     }
 
     /**
@@ -24,8 +24,6 @@ class DriverFactory{
      * @returns         driver类 或 undefined
      */
     public static get(name?:string):any{
-        return this.drivers.get(name||RelaenManager.dialect);
+        return this.providers.get(name||RelaenManager.dialect);
     }
 }
-
-export {DriverFactory}

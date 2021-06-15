@@ -49,5 +49,4 @@ export class Group extends BaseEntity{
 	public setGroupUsers(value:Array<GroupUser>){
 		this.groupUsers = value;
 	}
-
 }

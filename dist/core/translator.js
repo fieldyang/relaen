@@ -1,0 +1,520 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Translator = void 0;
+const types_1 = require("./types");
+const baseentity_1 = require("./baseentity");
+const entityfactory_1 = require("./entityfactory");
+const errorfactory_1 = require("./errorfactory");
+const relaenutil_1 = require("./relaenutil");
+/**
+ * 翻译器
+ */
+class Translator {
+    constructor(entityName) {
+        /**
+         * 链式map {linkName:{entity:实体类名,alias:别名,co:字段对象}}
+         * linkName为 实体类名[_外键引用名1_外键引用名2_...]
+         * 如: Shop_owner
+         */
+        this.linkNameMap = new Map();
+        /**
+         * 别名id
+         */
+        this.aliasId = 0;
+        this.mainEntityName = entityName;
+    }
+    /**
+     * entity转insert sql
+     * @param entity
+     */
+    entityToInsert(entity, extra) {
+        let orm = entityfactory_1.EntityFactory.getClass(entity.constructor.name);
+        if (!orm) {
+            throw errorfactory_1.ErrorFactory.getError("0010", [entity.constructor.name]);
+        }
+        let arr = [];
+        arr.push('insert into');
+        arr.push(relaenutil_1.RelaenUtil.getTableName(orm));
+        arr.push('(');
+        //字段组合
+        let fields = [];
+        //值组合
+        let values = [];
+        //占位符
+        let qArr = [];
+        //id字段名
+        let idField = orm.id && orm.columns.has(orm.id.name) ? orm.columns.get(orm.id.name).name : undefined;
+        for (let key of orm.columns) {
+            let fo = key[1];
+            let v;
+            if (fo.refName) { //外键，只取主键
+                let refEn = entity[key[0]];
+                v = refEn && refEn instanceof baseentity_1.BaseEntity ? relaenutil_1.RelaenUtil.getIdValue(refEn) : null;
+            }
+            else {
+                v = entity[key[0]];
+            }
+            // 如果绑定字段名不存在，则用属性名
+            let fn = fo.name ? fo.name : key[0];
+            //值为空或字段已存在，则不添加
+            if (v === null || fields.includes(fn)) {
+                continue;
+            }
+            //设置主键
+            if (idField === fn) {
+                relaenutil_1.RelaenUtil.setIdValue(entity, v);
+            }
+            fields.push(fn);
+            values.push(v);
+            qArr.push('?');
+        }
+        arr.push(fields.join(','));
+        arr.push(') values (');
+        arr.push(qArr.join(','));
+        arr.push(')');
+        //针对不同的数据库，可能存在附加串
+        if (extra) {
+            arr.push(extra);
+        }
+        return [arr.join(' '), values];
+    }
+    /**
+     * entity转update sql
+     * @param entity                待更新entity
+     * @param ignoreUndefinedValue  忽略undefined值
+     */
+    entityToUpdate(entity, ignoreUndefinedValue) {
+        let orm = entityfactory_1.EntityFactory.getClass(entity.constructor.name);
+        if (!orm) {
+            throw errorfactory_1.ErrorFactory.getError("0010", [entity.constructor.name]);
+        }
+        let arr = [];
+        arr.push('update');
+        arr.push(relaenutil_1.RelaenUtil.getTableName(orm));
+        arr.push('set');
+        let fv = [];
+        //id值
+        let idValue;
+        //id名
+        let idName;
+        if (!orm.id) {
+            throw errorfactory_1.ErrorFactory.getError('0103');
+        }
+        let fields = [];
+        let values = [];
+        for (let key of orm.columns) {
+            let fo = key[1];
+            //如果绑定字段名不存在，则用属性名
+            let fn = fo.name ? fo.name : key[0];
+            //保存已添加字段，不重复添加
+            if (fields.includes(fn)) {
+                continue;
+            }
+            //字段值
+            let v;
+            if (fo.refName) { //外键，只取主键
+                let refEn = entity[key[0]];
+                v = refEn && refEn instanceof baseentity_1.BaseEntity ? relaenutil_1.RelaenUtil.getIdValue(refEn) : null;
+            }
+            else {
+                v = entity[key[0]];
+            }
+            if (key[0] === orm.id.name) {
+                idValue = v;
+                idName = key[1].name;
+            }
+            //值为空且不忽略空值或字段已添加，则不处理
+            if (v === null && ignoreUndefinedValue || fields.includes(fn)) {
+                continue;
+            }
+            fv.push(fn + '=?');
+            values.push(v);
+        }
+        if (!idValue) {
+            throw errorfactory_1.ErrorFactory.getError('0021', [orm.id.name]);
+        }
+        arr.push(fv.join(','));
+        //where
+        arr.push('where');
+        arr.push(idName + '=' + idValue);
+        let sql = arr.join(' ');
+        return [sql, values];
+    }
+    /**
+     * entity转update sql
+     * @param entity        实体对象
+     * @param className     实体类名
+     *
+     */
+    toDelete(entity, className) {
+        className = className || entity.constructor.name;
+        let idName;
+        let idValue;
+        let orm = entityfactory_1.EntityFactory.getClass(className);
+        if (!orm) {
+            throw errorfactory_1.ErrorFactory.getError("0010", [className]);
+        }
+        if (entity instanceof baseentity_1.BaseEntity) {
+            idName = relaenutil_1.RelaenUtil.getIdName(entity);
+            idValue = relaenutil_1.RelaenUtil.getIdValue(entity);
+        }
+        else if (className) {
+            idValue = entity;
+            idName = orm.id ? orm.id.name : null;
+        }
+        if (!idName || !idValue) {
+            throw errorfactory_1.ErrorFactory.getError("0025");
+        }
+        return ["delete from " + relaenutil_1.RelaenUtil.getTableName(orm) + ' where ' + orm.columns.get(idName).name + '=?', idValue];
+    }
+    /**
+     * 处理前置修饰符
+     */
+    handleModifer(modifier) {
+        if (!this.modifiers.includes(modifier)) {
+            this.modifiers.push(modifier);
+        }
+    }
+    /**
+     * 处理select字段集合
+     * @param arr           字段集合
+     * @param entityName    实体类名
+     */
+    handleSelectFields(arr, entityName) {
+        //第一个为实体名
+        for (let i = 0; i < arr.length; i++) {
+            let fn = arr[i].trim();
+            let ind1 = fn.indexOf('(');
+            if (ind1 !== -1) { //函数内
+                let foo = fn.substr(0, ind1).toLowerCase();
+                fn = fn.substring(ind1 + 1, fn.length - 1);
+                arr[i] = foo + '(' + this.handleOneField(fn, entityName, null, true) + ')';
+            }
+            else { //普通字段
+                let r = this.handleOneField(fn, entityName);
+                if (r !== null) {
+                    arr[i] = r;
+                }
+                else { //移除
+                    arr.splice(i, 1);
+                }
+            }
+        }
+        this.selectedFields = arr;
+    }
+    /**
+     * 处理一个字段
+     * @param field         字段名
+     * @param entityName    实体类名
+     * @param linkName      链名
+     * @param isCond        是否为条件字段
+     */
+    handleOneField(field, entityName, linkName, isCond) {
+        field = field.trim();
+        if (field === '') {
+            return '';
+        }
+        if (field === '*') {
+            //条件字段不处理
+            if (isCond) {
+                return '*';
+            }
+            entityName = entityName || this.mainEntityName;
+            linkName = linkName || entityName;
+            if (entityName && entityfactory_1.EntityFactory.hasClass(entityName)) {
+                let orm = entityfactory_1.EntityFactory.getClass(entityName);
+                let arr = [];
+                for (let o of orm.columns) {
+                    let aliasName;
+                    if (!this.linkNameMap.has(linkName)) {
+                        aliasName = 't' + this.aliasId++;
+                        this.linkNameMap.set(linkName, {
+                            entity: entityName,
+                            alias: aliasName
+                        });
+                    }
+                    else {
+                        aliasName = this.linkNameMap.get(linkName)['alias'];
+                    }
+                    //不查询外键
+                    if (!o[1].refName) {
+                        arr.push(aliasName + '.' + o[1].name + ' as "' + aliasName + '_' + o[0] + '"');
+                    }
+                }
+                return arr.join(',');
+            }
+            else {
+                return null;
+            }
+        }
+        //字段分割
+        let arr = field.split('.');
+        let index = 0;
+        //先判断是否为主实体
+        if (entityfactory_1.EntityFactory.hasClass(arr[0])) {
+            entityName = arr[0];
+            index++;
+        }
+        entityName = entityName || this.mainEntityName;
+        //设置默认refName
+        linkName = linkName || entityName;
+        let aliasName;
+        //加入linkname map
+        if (!this.linkNameMap.has(linkName)) {
+            aliasName = 't' + this.aliasId++;
+            this.linkNameMap.set(linkName, {
+                entity: entityName,
+                alias: aliasName
+            });
+        }
+        else {
+            aliasName = this.linkNameMap.get(linkName)['alias'];
+        }
+        let orm = entityfactory_1.EntityFactory.getClass(entityName);
+        if (!orm) {
+            throw errorfactory_1.ErrorFactory.getError('0010', [entityName]);
+        }
+        for (let i = index; i < arr.length; i++) {
+            if (arr[i] === '*') {
+                return this.handleOneField('*', entityName, linkName, isCond);
+            }
+            //字段不存在
+            if (!orm.columns.has(arr[i])) {
+                throw errorfactory_1.ErrorFactory.getError('0022', [entityName, arr[i]]);
+            }
+            let co = orm.columns.get(arr[i]);
+            //外键对象，则直接切换为外键对象
+            if (co.refName) {
+                let rel = orm.relations.get(arr[i]);
+                let a1 = arr.slice(i + 1);
+                //添加到join map
+                let oldLink = linkName;
+                linkName += '.' + arr[i];
+                if (!this.linkNameMap.has(linkName)) {
+                    this.linkNameMap.set(linkName, {
+                        entity: rel.entity,
+                        alias: 't' + this.aliasId++,
+                        co: co,
+                        from: oldLink
+                    });
+                }
+                //关联对象后无多余字段
+                if (i === arr.length - 1) {
+                    if (isCond) { //如果为条件，则转换为主键
+                        a1.push(relaenutil_1.RelaenUtil.getIdName(rel.entity));
+                    }
+                    else { //查询字段，则添加*
+                        a1.push('*');
+                    }
+                }
+                return this.handleOneField(a1.join('.'), rel.entity, linkName, isCond);
+            }
+            else {
+                if (isCond) {
+                    return aliasName + '.' + co.name;
+                }
+                return aliasName + '.' + co.name + ' as "' + aliasName + '_' + arr[i] + '"';
+            }
+        }
+    }
+    /**
+     * 处理重复entityName
+     * @param arr           实体类名数组
+     */
+    handleFrom(arr) {
+        for (let t of arr) {
+            //加入entity alias map
+            if (!this.linkNameMap.has(t)) {
+                this.linkNameMap.set(t, {
+                    entity: t,
+                    alias: 't' + this.aliasId++
+                });
+            }
+        }
+        this.fromTables = arr;
+    }
+    /**
+     * 处理where条件
+     * @param params        参数对象，每个参数值参考ICondValueObj接口
+     * @param entityName    实体类名
+     */
+    handleWhere(params, entityName) {
+        if (!params || typeof params !== 'object') {
+            return null;
+        }
+        //值数组
+        let pValues = [];
+        //where字符串
+        let whereStr = '';
+        Object.getOwnPropertyNames(params).forEach((item, ii) => {
+            //字段名
+            let fn = this.handleOneField(item, entityName, null, true);
+            //值对象
+            let vobj = params[item];
+            //默认关系符
+            let rel = '=';
+            //值
+            let v;
+            //参数值为对象且不为实体对象
+            if (vobj !== null && typeof vobj === 'object' && !(vobj instanceof baseentity_1.BaseEntity)) {
+                if (vobj.rel) {
+                    rel = vobj.rel.toUpperCase();
+                }
+                v = vobj.value;
+            }
+            else {
+                v = vobj;
+            }
+            //如果值为null且关系为“=”，则需要改为“is”
+            if (params[item] === null && rel === '=') {
+                rel = 'IS';
+            }
+            //like 添加%
+            if (rel === 'LIKE') {
+                v = '%' + v + '%';
+            }
+            // 如果值为实体对象，则获取实体对象的主键值
+            if (v instanceof baseentity_1.BaseEntity) {
+                v = relaenutil_1.RelaenUtil.getIdValue(v);
+            }
+            //前置字符串，通常为'('
+            if (vobj && vobj.before) {
+                whereStr += ' ' + vobj.before + ' ';
+            }
+            //逻辑关系
+            if (ii > 0) {
+                if (vobj && vobj.logic && vobj.logic.trim() !== '') {
+                    whereStr += ' ' + vobj.logic + ' ';
+                }
+                else {
+                    whereStr += ' AND ';
+                }
+            }
+            //字段和值
+            whereStr += fn + ' ' + rel + ' ?';
+            //后置字符串，通常为 'and','or',')'
+            if (vobj && vobj.after) {
+                whereStr += ' ' + vobj.after + ' ';
+            }
+            pValues.push(v);
+        });
+        if (whereStr !== '') {
+            this.whereObject = [whereStr, pValues];
+        }
+    }
+    /**
+     * 处理order by
+     * @param params
+     * @param entityName
+     */
+    handleOrder(params, entityName) {
+        if (!params || typeof params !== 'object') {
+            return null;
+        }
+        let arr = [];
+        Object.getOwnPropertyNames(params).forEach((item) => {
+            //字段名
+            let fn = this.handleOneField(item, entityName, null, true);
+            arr.push(fn + ' ' + (params[item] === 'asc' ? 'asc' : 'desc'));
+        });
+        if (arr.length > 0) {
+            this.orderString = arr.join(',');
+        }
+    }
+    /**
+     * 产生查询sql
+     * @returns     数组[sql,linkMap,values]
+     *              其中：linkMap为该translator的linkNameMap，values为查询参数值
+     */
+    getQuerySql() {
+        switch (this.sqlType) {
+            case types_1.EQueryType.SELECT:
+                return this.getSelectSql();
+            case types_1.EQueryType.DELETE:
+                return this.getDeleteSql();
+        }
+    }
+    /**
+     * 获取select sql
+     * @param mainOrm   主表类对象
+     * @returns 数组[sql,linkMap,values]
+     *          其中：linkMap为该translator的linkNameMap，values为查询参数值
+     */
+    getSelectSql() {
+        let orm = entityfactory_1.EntityFactory.getClass(this.mainEntityName);
+        //linkName不存在主表，则需要设置主表
+        if (!this.linkNameMap.has(this.mainEntityName)) {
+            this.linkNameMap.set(this.mainEntityName, { alias: 't0', entity: this.mainEntityName });
+        }
+        let sql = 'SELECT ';
+        let fields;
+        if (!this.selectedFields || this.selectedFields.length === 0) {
+            fields = this.handleOneField('*', this.mainEntityName);
+        }
+        else {
+            fields = this.selectedFields.join(',');
+        }
+        //前置修饰符
+        if (this.modifiers && this.modifiers.length > 0) {
+            sql += ' ' + this.modifiers.join(',') + ' ';
+        }
+        sql += fields + ' FROM ' + relaenutil_1.RelaenUtil.getTableName(orm) + ' ' + this.linkNameMap.get(this.mainEntityName)['alias'];
+        let entities = [];
+        //处理主表和join表
+        for (let o of this.linkNameMap) {
+            entities.push(o[1]['entity']);
+            if (!o[1]['from']) {
+                continue;
+            }
+            orm = entityfactory_1.EntityFactory.getClass(o[1]['entity']);
+            let al1 = o[1]['alias'];
+            let al2 = this.linkNameMap.get(o[1]['from'])['alias'];
+            let co = o[1]['co'];
+            sql += ' LEFT JOIN ' + relaenutil_1.RelaenUtil.getTableName(orm) + ' ' + al1 + ' on ' + al2 + '.' + co.name + '=' + al1 + '.' + co.refName;
+        }
+        //处理from
+        if (this.fromTables) {
+            for (let t of this.fromTables) {
+                if (entities.includes(t)) {
+                    continue;
+                }
+                orm = entityfactory_1.EntityFactory.getClass(t);
+                sql += ',' + relaenutil_1.RelaenUtil.getTableName(orm) + ' ' + this.linkNameMap.get(t)['alias'];
+            }
+        }
+        if (this.whereObject) {
+            sql += ' WHERE ' + this.whereObject[0];
+        }
+        if (this.orderString) {
+            sql += ' ORDER BY ' + this.orderString;
+        }
+        return [sql, this.linkNameMap, this.whereObject ? this.whereObject[1] : undefined];
+    }
+    /**
+     * 生成增删改sql
+     * @param notNeedAlias      不需要别名
+     * @returns 数组[sql,linkMap,values]
+     *          其中：linkMap为该translator的linkNameMap，values为查询参数值
+     */
+    getDeleteSql(notNeedAlias) {
+        let orm = entityfactory_1.EntityFactory.getClass(this.mainEntityName);
+        let sql = "delete " + (notNeedAlias ? '' : 't0 ') + " from " + relaenutil_1.RelaenUtil.getTableName(orm) + " t0 ";
+        //处理主表和join表
+        for (let o of this.linkNameMap) {
+            if (!o[1]['from']) {
+                continue;
+            }
+            orm = entityfactory_1.EntityFactory.getClass(o[1]['entity']);
+            let al1 = o[1]['alias'];
+            let al2 = this.linkNameMap.get(o[1]['from'])['alias'];
+            let co = o[1]['co'];
+            sql += ' LEFT JOIN ' + relaenutil_1.RelaenUtil.getTableName(orm) + ' ' + al1 + ' on ' + al2 + '.' + co.name + '=' + al1 + '.' + co.refName;
+        }
+        if (this.whereObject) {
+            sql += ' WHERE ' + this.whereObject[0];
+        }
+        return [sql, this.linkNameMap, this.whereObject ? this.whereObject[1] : undefined];
+    }
+}
+exports.Translator = Translator;
+//# sourceMappingURL=translator.js.map
