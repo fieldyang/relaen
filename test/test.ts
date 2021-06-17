@@ -329,7 +329,7 @@ RelaenManager.init({
     //用户名
     username: "root",
     //密码
-    password: "root",
+    password: "field",
     //数据库名
     database: "test",
     //连接池，可选
@@ -363,4 +363,3 @@ RelaenManager.init({
 // linkQuery();
 // native();
 doTransaction();
-// 测试fork、pull request 

@@ -92,11 +92,14 @@ export class PostgresProvider extends BaseProvider{
      * 获取实体sequence，针对主键生成策略为sequence时有效
      * @param em        entity manager
      * @param seqName   sequence name
+     * @param schema    schema
      * @returns         sequence 值
      */
-     public async getSequenceValue(em:EntityManager,seqName:string,schema:string):Promise<number>{
+    public async getSequenceValue(em:EntityManager,seqName:string,schema?:string):Promise<number>{
          // 需要指定sequence所属schema
-        let query: NativeQuery = em.createNativeQuery("select nextval('" + (schema?schema+'.' + seqName:seqName) + "')");
+        let query: NativeQuery = em.createNativeQuery(
+            "select nextval('" + (schema?schema + "." + seqName:seqName) + "')"
+        );
         let r = await query.getResult();
         if (r) {
             //转换为整数

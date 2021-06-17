@@ -66,9 +66,10 @@ export abstract class BaseProvider {
      * 获取实体sequence，针对主键生成策略为sequence时有效
      * @param em        entity manager
      * @param seqName   sequence name
+     * @param schema    schema
      * @returns         sequence 值
      */
-    getSequenceValue(em:EntityManager,seqName:string,schema:string):Promise<number>{
+    getSequenceValue(em:EntityManager,seqName:string,schema?:string):Promise<number>{
         return null;
     }
 }

@@ -71,10 +71,6 @@ export class OracleProvider extends BaseProvider {
         if (r.rows) {
             return r.rows;
         }
-        // 未使用oracle Rowid
-        // if (r.lastRowid) {
-        //     return r.lastRowid;
-        // }
         return r;
     }
 
@@ -97,12 +93,14 @@ export class OracleProvider extends BaseProvider {
      * 获取实体sequence，针对主键生成策略为sequence时有效
      * @param em        entity manager
      * @param seqName   sequence name
+     * @param schema    schema
      * @returns         sequence 值
      */
-    public async getSequenceValue(em: EntityManager, seqName: string, schema:string): Promise<number> {
+    public async getSequenceValue(em: EntityManager, seqName: string, schema?:string): Promise<number> {
         // 需要指定sequence所属schema
-        let query: NativeQuery = em.createNativeQuery('select ' + (schema?`"${schema}"."${seqName}"`:`"${seqName}"`) + '.nextval from dual');
-        // select "SEQ_SHOP".nextval from dual OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY 查询不能加分页
+        let query: NativeQuery = em.createNativeQuery(
+            "select " + (schema?schema + "." + seqName:seqName) + ".nextval from dual"
+        );
         let r = await query.getResultList(-1, -1);
         if (r[0].NEXTVAL) {
             //转换为整数

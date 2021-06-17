@@ -49,9 +49,10 @@ export class MysqlProvider extends BaseProvider {
                 conn.connect(err => {
                     if (err) {
                         reject(err);
+                        return;
                     }
+                    resolve(conn);
                 });
-                resolve(conn);
             }
         });
     }
@@ -65,13 +66,13 @@ export class MysqlProvider extends BaseProvider {
             connection.conn.release();
             return Promise.resolve(null);
         } else {
-            return new Promise((res, rej) => {
+            return new Promise((resolve, reject) => {
                 connection.conn.end(err => {
                     if (err) {
-                        rej(ErrorFactory.getError('0202', [err]));
+                        reject(ErrorFactory.getError('0202', [err]));
                         return;
                     }
-                    res(null);
+                    resolve(null);
                 });
             });
         }
@@ -123,9 +124,10 @@ export class MysqlProvider extends BaseProvider {
      * mysql 不支持sequence，返回0
      * @param em        entity manager
      * @param seqName   sequence name
+     * @param schema    schema
      * @returns         sequence 值
      */
-     public async getSequenceValue(em:EntityManager,seqName:string,schema:string):Promise<number>{
+     public async getSequenceValue(em:EntityManager,seqName:string,schema?:string):Promise<number>{
         return 0;
     }
 }
