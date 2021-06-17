@@ -24,6 +24,7 @@ export class MssqlTransaction extends Transaction {
     async commit() {
         if (this.tr) {
             await this.tr.commit();
+            delete this.conn['mssqlTransaction'];
             super.commit();
         }
     }
@@ -34,6 +35,7 @@ export class MssqlTransaction extends Transaction {
     async rollback() {
         if (this.tr) {
             await this.tr.rollback();
+            delete this.conn['mssqlTransaction'];
             super.rollback();
         }
     }

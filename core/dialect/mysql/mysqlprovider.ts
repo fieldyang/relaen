@@ -45,7 +45,8 @@ export class MysqlProvider extends BaseProvider {
                     resolve(conn);
                 })
             } else {
-                let conn = this.dbMdl.createConnection(this.options).connect(err => {
+                let conn = this.dbMdl.createConnection(this.options);
+                conn.connect(err => {
                     if (err) {
                         reject(err);
                     }
