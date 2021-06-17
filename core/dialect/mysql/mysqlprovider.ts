@@ -125,7 +125,7 @@ export class MysqlProvider extends BaseProvider {
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-     public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+     public async getSequenceValue(em:EntityManager,seqName:string,schema:string):Promise<number>{
         return 0;
     }
 }

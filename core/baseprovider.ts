@@ -68,7 +68,7 @@ export abstract class BaseProvider {
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-    getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+    getSequenceValue(em:EntityManager,seqName:string,schema:string):Promise<number>{
         return null;
     }
 }

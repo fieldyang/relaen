@@ -118,7 +118,7 @@ export class MssqlProvider extends BaseProvider {
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-    public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
+    public async getSequenceValue(em:EntityManager,seqName:string,schema:string):Promise<number>{
         let query: NativeQuery = em.createNativeQuery("select next value for " + seqName);
         let r = await query.getResult();
         if (r) {

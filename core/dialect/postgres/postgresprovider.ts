@@ -94,8 +94,9 @@ export class PostgresProvider extends BaseProvider{
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-     public async getSequenceValue(em:EntityManager,seqName:string):Promise<number>{
-        let query: NativeQuery = em.createNativeQuery("select nextval('" + seqName + "')");
+     public async getSequenceValue(em:EntityManager,seqName:string,schema:string):Promise<number>{
+         // 需要指定sequence所属schema
+        let query: NativeQuery = em.createNativeQuery("select nextval('" + (schema?schema+'.' + seqName:seqName) + "')");
         let r = await query.getResult();
         if (r) {
             //转换为整数
