@@ -248,7 +248,7 @@ class EntityManager {
             switch (orm.id.generator) {
                 case 'sequence':
                     let sn: string = orm.id.seqName;
-                    value = await ConnectionManager.provider.getSequenceValue(this,sn);
+                    value = await ConnectionManager.provider.getSequenceValue(this,sn,orm.schema);
                     break;
                 case 'table':  //0.2.3
                     let fn: string = orm.id.keyName;

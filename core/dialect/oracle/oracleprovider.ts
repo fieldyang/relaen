@@ -99,8 +99,9 @@ export class OracleProvider extends BaseProvider {
      * @param seqName   sequence name
      * @returns         sequence 值
      */
-    public async getSequenceValue(em: EntityManager, seqName: string): Promise<number> {
-        let query: NativeQuery = em.createNativeQuery('select "' + seqName + '".nextval from dual');
+    public async getSequenceValue(em: EntityManager, seqName: string, schema:string): Promise<number> {
+        // 需要指定sequence所属schema
+        let query: NativeQuery = em.createNativeQuery('select ' + (schema?`"${schema}"."${seqName}"`:`"${seqName}"`) + '.nextval from dual');
         // select "SEQ_SHOP".nextval from dual OFFSET 0 ROWS FETCH NEXT 1 ROWS ONLY 查询不能加分页
         let r = await query.getResultList(-1, -1);
         if (r[0].NEXTVAL) {
