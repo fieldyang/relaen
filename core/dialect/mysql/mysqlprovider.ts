@@ -86,10 +86,7 @@ export class MysqlProvider extends BaseProvider {
      * @returns             结果(集)
      */
      public async exec(connection: Connection, sql: string, params?: any[]) {
-        if (sql.length < 6) {
-            throw ErrorFactory.getError("0002", [sql]);
-        }
-        let r: any = await new Promise((resolve, reject) => {
+        return await new Promise((resolve, reject) => {
             connection.conn.query(sql, params, (error, results, fields) => {
                 if (error) {
                     reject(error);
@@ -98,10 +95,6 @@ export class MysqlProvider extends BaseProvider {
                 resolve(results);
             });
         });
-        if (r.insertId) {
-            return r.insertId;
-        }
-        return r;
     }
 
     /**
@@ -127,7 +120,16 @@ export class MysqlProvider extends BaseProvider {
      * @param schema    schema
      * @returns         sequence 值
      */
-     public async getSequenceValue(em:EntityManager,seqName:string,schema?:string):Promise<number>{
+    public async getSequenceValue(em:EntityManager,seqName:string,schema?:string):Promise<number>{
         return 0;
+    }
+
+    /**
+     * 从sql执行结果获取identityid，仅对主键生成策略是identity的有效
+     * @param result    sql执行结果
+     * @returns         主键
+     */
+    public getIdentityId(result:any): number{
+        return result.insertId;
     }
 }

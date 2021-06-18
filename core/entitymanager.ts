@@ -81,7 +81,7 @@ class EntityManager {
             EntityManagerFactory.setEntityStatus(entity, EEntityState.PERSIST);
             //设置主键值
             if (!RelaenUtil.getIdValue(entity)) {
-                RelaenUtil.setIdValue(entity, r);
+                RelaenUtil.setIdValue(entity, ConnectionManager.provider.getIdentityId(r));
             }
         } else { //update
             //更新到数据库
@@ -111,7 +111,7 @@ class EntityManager {
 
     /**
      * 通过id查找实体
-     * @param entityClass   entity class 名 
+     * @param entityClass   entity class 名
      * @param id            entity id 值
      * @returns             entity
      */
@@ -189,14 +189,17 @@ class EntityManager {
      * 创建查询对象
      * @param rql               relean ql
      * @param entityClassName   实体类名
+     * @returns                 查询对象
      */
     public createQuery(entityClassName?: string): Query {
         return new Query(this, entityClassName);
     }
 
     /**
-     * 原生sql查询
-     * @param sql 
+     * 创建原生sql查询
+     * @param sql               sql语句
+     * @param entityClassName   实体类名
+     * @returns                 原生查询对象
      */
     public createNativeQuery(sql: string, entityClassName?: string): NativeQuery {
         return new NativeQuery(sql, this, entityClassName);
@@ -238,7 +241,8 @@ class EntityManager {
 
     /**
      * 生成主键
-     * @param entity 
+     * @param entity    实体
+     * @return          主键值
      */
     private async genKey(entity: IEntity) {
         //如果generator为table，则从指定主键生成表中获取主键，并赋予entity
@@ -247,10 +251,13 @@ class EntityManager {
             let value;
             switch (orm.id.generator) {
                 case 'sequence':
-                    let sn: string = orm.id.seqName;
-                    value = await ConnectionManager.provider.getSequenceValue(this,sn,orm.schema);
+                    value = await ConnectionManager.provider.getSequenceValue(this,orm.id.seqName,orm.schema);
+                    //抛出异常
+                    if(!value){
+                        throw ErrorFactory.getError("0051");
+                    }
                     break;
-                case 'table':  //0.2.3
+                case 'table':  //TODO 0.3.1版本使用此功能
                     let fn: string = orm.id.keyName;
                     //需要加锁
                     let query: NativeQuery = this.createNativeQuery("select " + orm.id.valueName + " from " + 

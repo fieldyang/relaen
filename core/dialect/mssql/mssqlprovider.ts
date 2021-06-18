@@ -78,14 +78,7 @@ export class MssqlProvider extends BaseProvider {
         params.forEach((value, index) => {
             request.input(index.toString(), value);
         });
-        let r = await request.query(sql);
-        if (r.recordset) {
-            if (r.recordset[0] && r.recordset[0].insertId && r.recordset.length == 1 && Object.keys(r.recordset[0]).length == 1) {
-                return r.recordset[0].insertId;
-            }
-            return r.recordset;
-        }
-        return r;
+        return await request.query(sql);
     }
 
     /**
@@ -127,5 +120,18 @@ export class MssqlProvider extends BaseProvider {
             return parseInt(r);
         }
         return 0;
+    }
+
+
+    /**
+     * 从sql执行结果获取identityid，仅对主键生成策略是identity的有效
+     * @param result    sql执行结果
+     * @returns         主键
+     */
+    public getIdentityId(result:any): any{
+        if (!result.recordset || result.recordset.length > 1 ||  !result.recordset[0].insertId) {
+            return;
+        }
+        return result.recordset[0].insertId;
     }
 }

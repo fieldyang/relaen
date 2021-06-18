@@ -1,8 +1,10 @@
 import { Connection } from "../../connection";
-import { IConnectionCfg } from "../../types";
+import { IConnectionCfg, IEntity, IEntityCfg } from "../../types";
 import { BaseProvider } from "../../baseprovider";
 import { EntityManager } from "../../entitymanager";
 import { NativeQuery } from "../../nativequery";
+import { RelaenUtil } from "../../relaenutil";
+import { EntityManagerFactory } from "../../entitymanagerfactory";
 
 /**
  * postgres provider
@@ -64,13 +66,7 @@ export class PostgresProvider extends BaseProvider{
      */
     public async exec(connection: Connection, sql: string, params?: any[]) {
         let r = await connection.conn.query(sql, params);
-        if (r && r.command == 'INSERT') {
-            return Object.values(r.rows[0])[0];
-        }
-        if (r.rows) {
-            return r.rows;
-        }
-        return r;
+        return r.rows?r.rows:r;
     }
 
     /**
@@ -106,5 +102,17 @@ export class PostgresProvider extends BaseProvider{
             return parseInt(r);
         }
         return 0;
+    }
+
+    /**
+     * 从sql执行结果获取identityid，仅对主键生成策略是identity的有效
+     * @param result    sql执行结果
+     * @returns         主键
+     */
+    public getIdentityId(result:any): number{
+        if (!result || result.command !== 'INSERT' || !result.rows || result.rows.length !== 1) {
+            return;
+        }
+        return <number>Object.values(result.rows[0])[0];
     }
 }

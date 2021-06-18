@@ -72,4 +72,13 @@ export abstract class BaseProvider {
     getSequenceValue(em:EntityManager,seqName:string,schema?:string):Promise<number>{
         return null;
     }
+
+    /**
+     * 从sql执行结果获取identityid，仅对主键生成策略是identity的有效
+     * @param result    sql执行结果
+     * @returns         主键
+     */
+    public getIdentityId(result:any): number{
+        return null;
+    }
 }

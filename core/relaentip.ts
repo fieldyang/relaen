@@ -12,6 +12,7 @@ var RelaenTip ={
     "0025":"Entity has no id property or id value",
 
     "0050":"Entity '${0}' id config is incorrect",
+    "0051":"Entity '${0}' id config sequence is incorrect",
     
     "0100":"Wrong rql: lack of keyword 'from'",
     "0101":"Wrong rql: nearby 'join on'",
