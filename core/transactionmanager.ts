@@ -15,10 +15,10 @@ export class TransactionManager{
     /**
      * 添加事务
      * @param value     transaction 类
-     * @param threadId  thread id，默认为当前thread id
+     * @param threadId  thread id，默认新建
      */
     public static add(value:Transaction,threadId?:number){
-        this.transactions.set(threadId || RelaenThreadLocal.getThreadId(),value);
+        this.transactions.set(threadId || RelaenThreadLocal.newThreadId(),value);
     }
 
     /**
