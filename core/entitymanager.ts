@@ -272,7 +272,7 @@ class EntityManager {
                         await query.getResult();
                     }
                     //释放锁
-                    //todo
+                    //TODO 0.3.1
                     break;
                 case 'uuid':
                     value = require('uuid').v1();

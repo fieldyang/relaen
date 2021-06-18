@@ -6,7 +6,7 @@ import { EntityManager } from "../../entitymanager";
 
 /**
  * mysql provider
- * @since 0.2.3
+ * @since 0.3.0
  */
 export class MysqlProvider extends BaseProvider {
     /**

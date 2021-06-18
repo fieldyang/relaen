@@ -6,7 +6,7 @@ import { NativeQuery } from "../../nativequery";
 
 /**
  * oracle provider
- * @since 0.2.3
+ * @since 0.3.0
  */
 export class OracleProvider extends BaseProvider {
     /**
@@ -20,10 +20,10 @@ export class OracleProvider extends BaseProvider {
         this.options = {
             user: cfg.username,
             password: cfg.password,
-            connectString: cfg.host + ":" + cfg.port + "/" + cfg.database,
+            connectString: cfg.host + ":" + cfg.port + "/" + cfg.database
         }
         if (cfg.pool && cfg.pool.max) {
-            this.options['poolMax'] = cfg.pool.max || 4;
+            this.options['poolMax'] = cfg.pool.max;
             this.options['poolMin'] = cfg.pool.min || 4;
         }
     }

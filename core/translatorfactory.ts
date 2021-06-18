@@ -1,27 +1,27 @@
 import { RelaenManager } from "./relaenmanager";
 
 /**
- * driver工厂
+ * translator类工厂
  */
 export class TranslatorFactory{
     /**
-     * driver集合
+     * translator类集合
      */
     private static translators:Map<string,any> = new Map();
 
     /**
-     * 添加driver
-     * @param name      driver 名
-     * @param driver    driver 类
+     * 添加translator类
+     * @param name              translator类名
+     * @param translatorClass   translator类
      */
-    public static add(name:string,tl:any){
-        this.translators.set(name,tl);
+    public static add(name:string,translatorClass:any){
+        this.translators.set(name,translatorClass);
     }
 
     /**
-     * 获取driver
+     * 获取事务类
      * @param args      解释器初始化参数，通常为实体类名
-     * @returns         driver类 或 undefined
+     * @returns         translator类或undefined
      */
     public static get(args?:any):any{
         let ts = this.translators.get(RelaenManager.dialect);

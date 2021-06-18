@@ -1,16 +1,16 @@
 import { RelaenManager } from "./relaenmanager";
 
 /**
- * driver工厂
+ * 事务类型工厂
  */
 export class TransactionFactory{
     /**
-     * driver集合
+     * 事务类型集合
      */
     private static transactions:Map<string,any> = new Map();
 
     /**
-     * 添加driver
+     * 添加事务类
      * @param name      dialect 名
      * @param value     transaction 类
      */
@@ -19,7 +19,7 @@ export class TransactionFactory{
     }
 
     /**
-     * 获取driver
+     * 获取事务类
      * @param name      dialect名 
      * @returns         transaction类 或 undefined
      */

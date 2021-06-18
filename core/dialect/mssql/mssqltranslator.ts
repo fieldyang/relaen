@@ -7,7 +7,7 @@ import { IEntity, IEntityCfg } from "../../types";
 
 /**
  * mssql 翻译器
- * @since 0.2.3
+ * @since 0.3.0
  */
 export class MssqlTranslator extends Translator{
     /**

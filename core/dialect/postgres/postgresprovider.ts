@@ -8,7 +8,7 @@ import { EntityManagerFactory } from "../../entitymanagerfactory";
 
 /**
  * postgres provider
- * @since 0.2.3
+ * @since 0.3.0
  */
 export class PostgresProvider extends BaseProvider{
     /**
@@ -23,9 +23,15 @@ export class PostgresProvider extends BaseProvider{
             password: cfg.password,
             host: cfg.host,
             port: cfg.port,
-            database: cfg.database
+            database: cfg.database,
+            timeout:cfg.idleTimeout||0
         };
+        
         if (cfg.pool) {
+            //最大连接数
+            if(cfg.pool.max){
+                this.options.max = this.pool.max
+            }    
             this.pool = new this.dbMdl.Pool(this.options);
         }
     }

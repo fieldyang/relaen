@@ -2,19 +2,28 @@ import { Transaction } from "../../transaction";
 
 /**
  * mssql 事务类
- * @since 0.2.3
+ * @since 0.3.0
  */
 export class MssqlTransaction extends Transaction {
     /**
      * 实际的transaction
      */
     private tr:any;
+
+    /**
+     * 构造器
+     * @param conn      connection 
+     */
+    constructor(conn:any){
+        super(conn);
+        //创建实际的transaction
+        this.tr = conn.transaction();
+    }
     /**
      * 开始事务
      */
     async begin() {
-        this.tr = await this.conn.transaction().begin();
-        this.conn['mssqlTransaction'] = this.tr;
+        this.tr.begin();
         super.begin();
     }
 
@@ -22,21 +31,15 @@ export class MssqlTransaction extends Transaction {
      * 提交事务
      */
     async commit() {
-        if (this.tr) {
-            await this.tr.commit();
-            delete this.conn['mssqlTransaction'];
-            super.commit();
-        }
+        await this.tr.commit();
+        super.commit();
     }
 
     /**
      * 事务回滚
      */
     async rollback() {
-        if (this.tr) {
-            await this.tr.rollback();
-            delete this.conn['mssqlTransaction'];
-            super.rollback();
-        }
+        await this.tr.rollback();
+        super.rollback();
     }
 }

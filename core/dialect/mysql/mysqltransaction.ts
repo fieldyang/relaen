@@ -1,9 +1,8 @@
-import { Logger } from "../../logger";
 import { Transaction } from "../../transaction";
 
 /**
  * mysql 事务类
- * @since 0.2.3
+ * @since 0.3.0
  */
 class MysqlTransaction extends Transaction{
     /**

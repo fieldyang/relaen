@@ -68,7 +68,7 @@ class RelaenManager {
      * 初始化各dialect对应的translator
      */
     private static initTranslator(){
-        //添加到driver工厂
+        //添加到translator工厂
         TranslatorFactory.add('mssql',MssqlTranslator);
         TranslatorFactory.add('mysql',MysqlTranslator);
         TranslatorFactory.add('oracle',OracleTranslator);
@@ -76,7 +76,7 @@ class RelaenManager {
     }
 
     /**
-     * 初始化各dialect对应的driver
+     * 初始化各dialect对应的provider
      */
     private static initProvider(){
         ProviderFactory.add('mssql',MssqlProvider);

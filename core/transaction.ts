@@ -1,7 +1,5 @@
-import { Connection } from "./connection";
-import { EntityManager } from "./entitymanager";
 import { Logger } from "./logger";
-import { Query } from "./query";
+import { TransactionManager } from "./transactionmanager";
 
 /**
  * 事务基类
@@ -17,6 +15,8 @@ abstract class Transaction{
      */
     constructor(conn:any){
         this.conn = conn;
+        //加入事务管理器
+        TransactionManager.add(this);
     }
     /**
      * 事务开始
@@ -28,6 +28,8 @@ abstract class Transaction{
      * 事务提交,继承类需要重载
      */
     public async commit(){
+        //从事务管理器移除
+        TransactionManager.remove();
         Logger.console('Transaction is commited.');
     }
 
@@ -35,6 +37,8 @@ abstract class Transaction{
      * 事务回滚,继承类需要重载
      */
     public async rollback(){
+        //从事务管理器移除
+        TransactionManager.remove();
         Logger.console('Transaction is rolled back.');
     }
 }

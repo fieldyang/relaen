@@ -176,7 +176,7 @@ class EntityFactory{
      * 通过表名获取配置对象
      * @param tblName   表名
      * @returns         entity 配置对象
-     * @since 0.2.3
+     * @since 0.3.0
      */
     public static getEntityCfgByTblName(tblName:string):IEntityCfg{
         for(let v of this.entityClasses){

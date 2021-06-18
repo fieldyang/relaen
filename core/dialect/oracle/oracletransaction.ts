@@ -2,7 +2,7 @@ import { Transaction } from "../../transaction";
 
 /**
  * oracle 事务类
- * @since 0.2.3
+ * @since 0.3.0
  */
 export class OracleTransaction extends Transaction {
 

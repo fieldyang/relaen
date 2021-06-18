@@ -4,10 +4,11 @@ import { BaseProvider } from "../../baseprovider";
 import { EntityFactory } from "../../entityfactory";
 import { EntityManager } from "../../entitymanager";
 import { NativeQuery } from "../../nativequery";
+import { TransactionManager } from "../../transactionmanager";
 
 /**
  * mssql provider
- * @since 0.2.3
+ * @since 0.3.0
  */
 export class MssqlProvider extends BaseProvider {
     /**
@@ -30,9 +31,9 @@ export class MssqlProvider extends BaseProvider {
         };
         if (cfg.pool && cfg.pool.max) {
             this.options['pool'] = {
-                max: cfg.pool.max || 10,
+                max: cfg.pool.max,
                 min: cfg.pool.min || 0,
-                idleTimeoutMillis: 30000
+                idleTimeoutMillis: cfg.idleTimeout || 30000
             }
             this.pool = new this.dbMdl.ConnectionPool(this.options);
         }
@@ -68,10 +69,12 @@ export class MssqlProvider extends BaseProvider {
      * @returns             结果(集)
      */
     public async exec(connection: Connection, sql: string, params?: any[]):Promise<any> {
-        let request;
-        if (connection.conn.mssqlTransaction) {
-            request = connection.conn.mssqlTransaction.request();
-        } else {
+        let request; //用request作为sql执行器
+        //如果事务存在，则通过事务获取request，否则通过connection获取
+        let tr = TransactionManager.get();
+        if(tr){
+            request = tr.tr.request();
+        }else {
             request = connection.conn.request();
         }
         params = params || [];

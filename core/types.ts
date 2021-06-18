@@ -40,6 +40,18 @@ interface IConnectionCfg {
      * 数据库
      */
     database: string;
+
+    /**
+     * 连接超时时间
+     * @since 0.3.0
+     */
+    timeout:number;
+
+    /**
+     * 连接后idle超时时间（ms）
+     */
+    idleTimeout: number;
+
     /**
      * 连接池配置
      */
